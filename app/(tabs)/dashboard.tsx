@@ -31,7 +31,7 @@ function jobStatusVariant(status: string) {
 }
 
 export default function DashboardScreen({ navigation }: Props) {
-  const { technician, updateTechnician, signOut } = useTechAuth();
+  const {technician, updateTechnician, signOut } = useTechAuth();
   const [todayJobs, setTodayJobs] = useState<AssignedJob[]>([]);
   const [pastJobs, setPastJobs] = useState<AssignedJob[]>([]);
   const [summary, setSummary] = useState<MonthlySummary | null>(null);
@@ -58,6 +58,7 @@ export default function DashboardScreen({ navigation }: Props) {
     }
   }, []);
 
+  console.log('todayJobs', technician);
   // Share GPS location while available
   useEffect(() => {
     let sub: Location.LocationSubscription | null = null;
@@ -117,6 +118,7 @@ export default function DashboardScreen({ navigation }: Props) {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); loadData(); }} tintColor={TechColors.brand} />}
       >
         {/* Availability Toggle */}
+        {/* 
         <TechCard>
           <View style={styles.availRow}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
@@ -139,6 +141,7 @@ export default function DashboardScreen({ navigation }: Props) {
             />
           </View>
         </TechCard>
+        */}
 
         {/* Monthly Summary */}
         {summary && (

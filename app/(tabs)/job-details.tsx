@@ -84,25 +84,6 @@ export default function JobDetailScreen() {
     ]);
   };
 
-  const handleSendQuotation = async () => {
-    Alert.alert('Send Quotation', 'This will send the current pricing to the customer for approval.', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Send', onPress: async () => {
-          setQuotationLoading(true);
-          try {
-            await techJobApi.sendQuotation(jobId);
-            await loadJob();
-            Alert.alert('✅ Sent', 'Quotation sent to customer. Waiting for approval.');
-          } catch (err: any) {
-            Alert.alert('Error', err.message);
-          } finally {
-            setQuotationLoading(false);
-          }
-        },
-      },
-    ]);
-  };
 
   const openMaps = () => {
     if (!job) return;
@@ -120,7 +101,6 @@ export default function JobDetailScreen() {
   const canEnRoute = !job.technician_en_route && job.service_status === 'Technician Assigned';
   const canCheckIn = job.technician_en_route && !job.technician_arrival_onsite;
   const canStartOnsite = job.technician_arrival_onsite;
-  const canSendQuotation = job.technician_arrival_onsite && !job.send_quotation_to_customer;
   const canSign = job.agreed_to_quotation && !job.customer_confirmation_signature;
 
   return (
@@ -221,10 +201,6 @@ export default function JobDetailScreen() {
               variant="outline"
               style={{ marginBottom: 10 }}
             />
-          )}
-
-          {canSendQuotation && (
-            <TechButton label="📤  Send quotation to customer" onPress={handleSendQuotation} loading={quotationLoading} variant="primary" style={{ marginBottom: 10 }} />
           )}
 
           {job.send_quotation_to_customer && !job.agreed_to_quotation && (

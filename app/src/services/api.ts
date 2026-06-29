@@ -1,4 +1,5 @@
 import * as SecureStore from "expo-secure-store";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {
     AssignedJob,
@@ -9,7 +10,7 @@ import {
     TechAuthResponse,
     TechLoginPayload,
     Technician,
-} from "../src/types";
+} from "../types";
 
 /* ===========================================================
    CONFIG
@@ -61,6 +62,8 @@ async function request<T>(
       headers,
     }
   );
+
+  const userId = await AsyncStorage.getItem('user_id');
 
   const data = await response.json().catch(() => ({}));
 
@@ -176,53 +179,38 @@ export const techProfileApi = {
 =========================================================== */
 
 export const techJobApi = {
+ 
   getTodaysJobs: (): Promise<AssignedJob[]> =>
-    request("/api/technician/jobs/today"),
+    request("/api/technicians/${userId}/assigned-jobs"),
 
   getPastJobs: (): Promise<AssignedJob[]> =>
-    request("/api/technician/jobs/history"),
+    request("/api/technicians/${userId}/assigned-jobs"),  // to be edited
 
   getJobDetail: (
     jobId: number
   ): Promise<AssignedJob> =>
-    request(`/api/technician/jobs/${jobId}`),
-
-  acceptJob: (
-    jobId: number
-  ): Promise<AssignedJob> =>
-    request(`/api/technician/jobs/${jobId}/accept`, {
-      method: "PUT",
-    }),
-
+    request(`/api/jobs/${jobId}`),
+    
   setEnRoute: (
     jobId: number
   ): Promise<AssignedJob> =>
-    request(`/api/service-requests/${jobId}/en-route`, {
+    request(`/api/jobs/${jobId}/transition`, {
       method: "PUT",
       body: JSON.stringify({
-        technician_en_route: true,
+        status: "en_route",
       }),
     }),
 
   setArrived: (
     jobId: number
   ): Promise<AssignedJob> =>
-    request(`/api/service-requests/${jobId}/arrived`, {
+    request(`/api/jobs/${jobId}/transition`, {
       method: "PUT",
       body: JSON.stringify({
-        technician_arrival_onsite: true,
+        status: "arrived",
       }),
     }),
 
-  sendQuotation: (
-    jobId: number
-  ): Promise<AssignedJob> =>
-    request(`/api/service-requests/${jobId}/send-quotation`, {
-      method: "PUT",
-      body: JSON.stringify({
-        send_quotation_to_customer: true,
-      }),
-    }),
 
   uploadSignature: (
     jobId: number,
@@ -291,7 +279,7 @@ export const materialApi = {
 
 export const summaryApi = {
   getMonthlySummary: (): Promise<MonthlySummary> =>
-    request("/api/technician/summary/monthly"),
+    request("api/technicians/3/monthly-summary"),
 };
 
 /* ===========================================================

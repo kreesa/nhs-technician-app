@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
     Alert,
     StyleSheet,
@@ -48,9 +49,19 @@ export default function LoginScreen() {
 
         const data = await login(email, password, device_name);
 
+        console.log('Login response:', JSON.stringify(data, null, 2));
+
+        // To be updated : proper sign in
+        // await signIn(data.token, data.user);
+
+        // quick fix : store user id and pass
         await saveToken(data.token);
 
-        router.push("/dashboard");
+        // console.log('user_id:',data.user.id);
+
+        await AsyncStorage.setItem('user_id', String(data.user.id)); 
+
+        router.replace("/dashboard");
     } catch (error: any) {
         Alert.alert("Login failed", error.message);
     }
