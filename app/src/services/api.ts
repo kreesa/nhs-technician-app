@@ -198,6 +198,31 @@ export const techJobApi = {
 };
 
 /* ===========================================================
+   OVERTIME
+=========================================================== */
+interface OvertimeEntry {
+  start_time: string; // "10:00 AM"
+  end_time: string;   // "12:00 PM"
+}
+
+export async function addOvertimeLog(
+  jobId: string | number,
+  dateKey: string,
+  entries: OvertimeEntry[]
+) {
+  return request(`/api/jobs/${jobId}/logs`, {
+    method: 'POST',
+    body: JSON.stringify({
+      working_hours_log: {
+        [dateKey]: entries,
+      },
+    }),
+  });
+  // ^ adjust this call to match your actual request() signature
+  //   (e.g. if it takes (endpoint, method, body) as separate args instead)
+}
+
+/* ===========================================================
    ONSITE PROGRESS
 =========================================================== */
 

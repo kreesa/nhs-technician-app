@@ -12,6 +12,7 @@ import {
 import { useLocalSearchParams } from "expo-router";
 import { techJobApi } from "../src/services/api";
 import { getAllowedTransitions, getStatusLabel, JobStatus } from "../src/constants/jobTransitions";
+import OvertimeLogModal from "../src/components/OvertimeLogModal";
 import {
   TechColors,
   TechRadius,
@@ -25,6 +26,7 @@ import {
   TechCard,
 } from "../src/components/ui";
 
+
 export default function JobDetailScreen() {
   const { jobId } = useLocalSearchParams<{ jobId: string }>();
 
@@ -32,6 +34,7 @@ export default function JobDetailScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const [overtimeModalVisible, setOvertimeModalVisible] = useState(false);
 
   const loadJob = useCallback(async () => {
     try {
@@ -280,6 +283,19 @@ export default function JobDetailScreen() {
                 </>
             )}
             </ScrollView>
+
+
+            {/* Overtime */}
+            <TouchableOpacity onPress={() => setOvertimeModalVisible(true)}>
+              <Text>Overtime Log</Text>
+            </TouchableOpacity>
+
+            <OvertimeLogModal
+              visible={overtimeModalVisible}
+              jobId={currentJobId} // whatever variable holds the active job id on this screen
+              onClose={() => setOvertimeModalVisible(false)}
+              onSuccess={() => {/* refresh logs if you display them */}}
+            />
         </View>
         );
 }
