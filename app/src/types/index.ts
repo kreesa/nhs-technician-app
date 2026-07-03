@@ -20,50 +20,35 @@ export interface Technician {
   rating?: number;
   total_jobs?: number;
   is_available?: boolean;
-  current_latitude?: number;
-  current_longitude?: number;
+  current_site_latitude?: number;
+  current_site_longitude?: number;
   created_at?: string;
 }
-
-// ─── Job / Assignment ─────────────────────────────────────────────────────────
-export type JobStatus =
-  | 'Request received'
-  | 'Technician Assigned'
-  | 'Work In Progress'
-  | 'On Hold'
-  | 'Completed';
-
-export type OnsiteStatus =
-  | 'Diagnosing issue'
-  | 'Waiting for Material'
-  | 'Work in Progress'
-  | 'Complete';
 
 export interface CustomerInfo {
   id: number;
   full_name: string;
   phone: string;
   service_address: string;
-  latitude: number;
-  longitude: number;
+  site_latitude: number;
+  site_longitude: number;
 }
 
 export interface AssignedJob {
-  id: number;                       // service_request id
+  id: number; // service_request id
   assignment_id: number;
-  customer: CustomerInfo;
-  service_category: string;
-  service_subcategory: string;
-  problem_description: string;
+  customer_id: CustomerInfo;
+  service_category_id: string;
+  service_subcategory_id: string;
+  description: string;
   problem_images?: string[];
-  service_location: string;
-  latitude: number;
-  longitude: number;
-  requested_date: string;
-  requested_timeslot: string;
-  scheduled_timeslot: string;
-  technician_service_fee: number;
-  service_status: JobStatus;
+  site_address: string;
+  site_latitude: number;
+  site_longitude: number;
+  scheduled_for: string;
+  scheduled_time_slot: string;
+  original_estimated_amount: number;
+  status: JobStatus;
   technician_en_route: boolean;
   technician_arrival_onsite: boolean;
   need_assistance: boolean;
@@ -94,17 +79,17 @@ export interface Material {
 
 export interface MaterialRequest {
   service_id: number;
-  fee_type: 'Material Cost';
-  material_type: number;  // material id
+  fee_type: "Material Cost";
+  material_type: number; // material id
   quantity?: number;
 }
 
 // ─── Monthly Summary ──────────────────────────────────────────────────────────
 export interface MonthlySummary {
-  jobs_completed: number;
-  total_earned: number;
-  net_payout: number;
-  month: string;
+  month_start: string;
+  completed_jobs_count: number;
+  total_working_minutes: number;
+  working_hours: number;
 }
 
 // ─── Navigation ───────────────────────────────────────────────────────────────
@@ -117,3 +102,4 @@ export type TechRootStackParamList = {
   Signature: { jobId: number };
   TechProfile: undefined;
 };
+

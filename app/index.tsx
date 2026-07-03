@@ -12,7 +12,7 @@ export default function HomeScreen() {
       }}
     >
       <Text style={{ fontSize: 28, fontWeight: "bold", marginBottom: 30 }}>
-        Welcome
+        Welcome Technician
       </Text>
 
       <TouchableOpacity

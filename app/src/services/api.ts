@@ -1,15 +1,15 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {
-    AssignedJob,
-    Material,
-    MaterialRequest,
-    MonthlySummary,
-    OnsiteProgress,
-    TechAuthResponse,
-    TechLoginPayload,
-    Technician,
+  AssignedJob,
+  Material,
+  MaterialRequest,
+  MonthlySummary,
+  OnsiteProgress,
+  TechAuthResponse,
+  TechLoginPayload,
+  Technician,
 } from "../types";
 
 /* ===========================================================
@@ -38,10 +38,7 @@ export async function removeToken() {
    COMMON REQUEST
 =========================================================== */
 
-async function request<T>(
-  path: string,
-  options: RequestInit = {}
-): Promise<T> {
+async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = await getToken();
 
   const headers: Record<string, string> = {
@@ -55,22 +52,16 @@ async function request<T>(
     ...(options.headers as Record<string, string>),
   };
 
-  const response = await fetch(
-    `${BASE_URL}${path}`,
-    {
-      ...options,
-      headers,
-    }
-  );
+  const response = await fetch(`${BASE_URL}${path}`, {
+    ...options,
+    headers,
+  });
 
-  const userId = await AsyncStorage.getItem('user_id');
 
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    throw new Error(
-      data.message || `HTTP ${response.status}`
-    );
+    throw new Error(data.message || `HTTP ${response.status}`);
   }
 
   return data;
@@ -81,16 +72,11 @@ async function request<T>(
 =========================================================== */
 
 export const techAuthApi = {
-  login: async (
-    payload: TechLoginPayload
-  ): Promise<TechAuthResponse> => {
-    const data = await request<TechAuthResponse>(
-      "/api/technician/auth/login",
-      {
-        method: "POST",
-        body: JSON.stringify(payload),
-      }
-    );
+  login: async (payload: TechLoginPayload): Promise<TechAuthResponse> => {
+    const data = await request<TechAuthResponse>("/api/technician/auth/login", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
 
     // Save token automatically
     if ((data as any).token) {
@@ -104,19 +90,16 @@ export const techAuthApi = {
 export async function login(
   email: string,
   password: string,
-  device_name: string
+  device_name: string,
 ) {
-  const data = await request<any>(
-    "/api/auth/login",
-    {
-      method: "POST",
-      body: JSON.stringify({
-        email,
-        password,
-        device_name,
-      }),
-    }
-  );
+  const data = await request<any>("/api/auth/login", {
+    method: "POST",
+    body: JSON.stringify({
+      email,
+      password,
+      device_name,
+    }),
+  });
 
   if (data.token) {
     await saveToken(data.token);
@@ -140,20 +123,15 @@ export async function logout() {
 =========================================================== */
 
 export const techProfileApi = {
-  getProfile: (): Promise<Technician> =>
-    request("/api/technician/profile"),
+  getProfile: (): Promise<Technician> => request("/api/technician/profile"),
 
-  updateProfile: (
-    data: Partial<Technician>
-  ): Promise<Technician> =>
+  updateProfile: (data: Partial<Technician>): Promise<Technician> =>
     request("/api/technician/profile", {
       method: "PUT",
       body: JSON.stringify(data),
     }),
 
-  setAvailability: (
-    is_available: boolean
-  ): Promise<Technician> =>
+  setAvailability: (is_available: boolean): Promise<Technician> =>
     request("/api/technician/availability", {
       method: "PUT",
       body: JSON.stringify({
@@ -162,14 +140,14 @@ export const techProfileApi = {
     }),
 
   updateGpsLocation: (
-    latitude: number,
-    longitude: number
+    site_latitude: number,
+    site_longitude: number,
   ): Promise<void> =>
     request("/api/technician/gps-location", {
       method: "PUT",
       body: JSON.stringify({
-        latitude,
-        longitude,
+        site_latitude,
+        site_longitude,
       }),
     }),
 };
@@ -177,50 +155,44 @@ export const techProfileApi = {
 /* ===========================================================
    JOBS
 =========================================================== */
+// technician_id
+const getUserId = async (): Promise<string | null> => {
+  return AsyncStorage.getItem("user_id");
+};
 
 export const techJobApi = {
- 
-  getTodaysJobs: (): Promise<AssignedJob[]> =>
-    request("/api/technicians/${userId}/assigned-jobs"),
 
-  getPastJobs: (): Promise<AssignedJob[]> =>
-    request("/api/technicians/${userId}/assigned-jobs"),  // to be edited
+  getTodaysJobs: async (): Promise<AssignedJob[]> =>{
+    const userId = await getUserId();
+    const response = await request(`/api/technicians/${userId}/assigned-jobs`);
+    return response.data;
+  },
 
-  getJobDetail: (
-    jobId: number
-  ): Promise<AssignedJob> =>
+  getPastJobs: async (): Promise<AssignedJob[]> =>{
+    const userId = await getUserId();
+    return request(`/api/technicians/${userId}/assigned-jobs`);
+  },
+
+  getJobDetail: (jobId: number): Promise<AssignedJob> =>
     request(`/api/jobs/${jobId}`),
-    
-  setEnRoute: (
-    jobId: number
+
+  transitionJob: (
+    jobId: number,
+    status: JobStatus
   ): Promise<AssignedJob> =>
     request(`/api/jobs/${jobId}/transition`, {
-      method: "PUT",
-      body: JSON.stringify({
-        status: "en_route",
-      }),
+      method: "POST",
+      body: JSON.stringify({ status }),
     }),
-
-  setArrived: (
-    jobId: number
-  ): Promise<AssignedJob> =>
-    request(`/api/jobs/${jobId}/transition`, {
-      method: "PUT",
-      body: JSON.stringify({
-        status: "arrived",
-      }),
-    }),
-
 
   uploadSignature: (
     jobId: number,
-    signatureUrl: string
+    signatureUrl: string,
   ): Promise<AssignedJob> =>
     request(`/api/service-requests/${jobId}/signature`, {
       method: "PUT",
       body: JSON.stringify({
-        customer_confirmation_signature:
-          signatureUrl,
+        customer_confirmation_signature: signatureUrl,
       }),
     }),
 };
@@ -230,14 +202,10 @@ export const techJobApi = {
 =========================================================== */
 
 export const onsiteApi = {
-  getProgress: (
-    jobId: number
-  ): Promise<OnsiteProgress[]> =>
+  getProgress: (jobId: number): Promise<OnsiteProgress[]> =>
     request(`/api/technician/jobs/${jobId}/progress`),
 
-  saveProgress: (
-    data: OnsiteProgress
-  ): Promise<OnsiteProgress> =>
+  saveProgress: (data: OnsiteProgress): Promise<OnsiteProgress> =>
     request("/api/technician/onsite-progress", {
       method: "POST",
       body: JSON.stringify(data),
@@ -245,15 +213,12 @@ export const onsiteApi = {
 
   updateLatestProgress: (
     jobId: number,
-    data: Partial<OnsiteProgress>
+    data: Partial<OnsiteProgress>,
   ): Promise<OnsiteProgress> =>
-    request(
-      `/api/technician/jobs/${jobId}/progress/latest`,
-      {
-        method: "PUT",
-        body: JSON.stringify(data),
-      }
-    ),
+    request(`/api/technician/jobs/${jobId}/progress/latest`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
 };
 
 /* ===========================================================
@@ -261,12 +226,9 @@ export const onsiteApi = {
 =========================================================== */
 
 export const materialApi = {
-  getAllMaterials: (): Promise<Material[]> =>
-    request("/api/materials"),
+  getAllMaterials: (): Promise<Material[]> => request("/api/materials"),
 
-  requestMaterial: (
-    data: MaterialRequest
-  ): Promise<{ message: string }> =>
+  requestMaterial: (data: MaterialRequest): Promise<{ message: string }> =>
     request("/api/material-requests", {
       method: "POST",
       body: JSON.stringify(data),
@@ -278,8 +240,22 @@ export const materialApi = {
 =========================================================== */
 
 export const summaryApi = {
-  getMonthlySummary: (): Promise<MonthlySummary> =>
+    getMonthlySummary: (): Promise<MonthlySummary> =>
     request("api/technicians/3/monthly-summary"),
+
+  // getMonthlySummary: async (): Promise<MonthlySummary[]> =>{
+  //   const userId = await AsyncStorage.getItem("user_id");
+  //   return request(`/api/technicians/${userId}/monthly-summary`);
+  // },
+// getMonthlySummary: async (): Promise<MonthlySummary> => {
+//   const userId = await AsyncStorage.getItem("user_id");
+
+//   const response = await request(
+//     `/api/technicians/${userId}/monthly-summary`
+//   );
+
+//   return response.data;
+// },
 };
 
 /* ===========================================================
@@ -289,35 +265,29 @@ export const summaryApi = {
 export const techUploadApi = {
   uploadImage: async (
     uri: string,
-    type = "image/jpeg"
+    type = "image/jpeg",
   ): Promise<{ url: string }> => {
     const token = await getToken();
 
     const formData = new FormData();
 
-    formData.append(
-      "file",
-      {
-        uri,
-        type,
-        name: `upload_${Date.now()}.jpg`,
-      } as any
-    );
+    formData.append("file", {
+      uri,
+      type,
+      name: `upload_${Date.now()}.jpg`,
+    } as any);
 
-    const response = await fetch(
-      `${BASE_URL}/api/upload`,
-      {
-        method: "POST",
-        headers: {
-          ...(token
-            ? {
-                Authorization: `Bearer ${token}`,
-              }
-            : {}),
-        },
-        body: formData,
-      }
-    );
+    const response = await fetch(`${BASE_URL}/api/upload`, {
+      method: "POST",
+      headers: {
+        ...(token
+          ? {
+              Authorization: `Bearer ${token}`,
+            }
+          : {}),
+      },
+      body: formData,
+    });
 
     if (!response.ok) {
       throw new Error("Upload failed");
