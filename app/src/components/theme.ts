@@ -2,24 +2,32 @@ import { StyleSheet } from 'react-native';
 
 // ─── Colors ───────────────────────────────────────────────────────────────────
 export const TechColors = {
-  brand: '#0F4C81',       // slightly deeper blue for technician app
-  brandDark: '#083460',
-  brandBg: '#E3EEF8',
-  accent: '#F97316',      // orange accent — action-oriented feel
+  brand: '#0F6E56',        // Primary brand green
+  brandDark: '#0A5241',    // Darker shade for headers/buttons
+  brandBg: '#E4F4EF',      // Soft green background
+
+  accent: '#F97316',       // Orange accent
   accentBg: '#FFF0E4',
-  green: '#16A34A',
-  greenBg: '#DCFCE7',
+
+  blue: '#2563EB',         // Informational blue
+  blueBg: '#DBEAFE',
+
   red: '#DC2626',
   redBg: '#FEE2E2',
+
   amber: '#D97706',
   amberBg: '#FEF3C7',
-  pageBg: '#F1F5F9',
+
+  pageBg: '#F8FAF9',       // Slight warm off-white
   cardBg: '#FFFFFF',
+
   border: 'rgba(0,0,0,0.08)',
   borderMd: 'rgba(0,0,0,0.13)',
+
   text: '#0F172A',
   text2: '#475569',
   text3: '#94A3B8',
+
   white: '#FFFFFF',
 };
 

@@ -5,6 +5,7 @@ import { Technician } from '../types';
 interface TechAuthContextType {
   technician: Technician | null;
   token: string | null;
+  isLoggedIn: boolean;
   isLoading: boolean;
   signIn: (token: string, tech: Technician) => Promise<void>;
   signOut: () => Promise<void>;
@@ -14,6 +15,7 @@ interface TechAuthContextType {
 const TechAuthContext = createContext<TechAuthContextType>({
   technician: null,
   token: null,
+  isLoggedIn: false,
   isLoading: true,
   signIn: async () => {},
   signOut: async () => {},
@@ -24,10 +26,15 @@ export const TechAuthProvider = ({ children }: { children: ReactNode }) => {
   const [technician, setTechnician] = useState<Technician | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  
+  const isLoggedIn = !!token && !!technician;
 
   useEffect(() => {
     const restore = async () => {
       try {
+        // TEMP: Clear storage once
+        await AsyncStorage.clear();
+        
         const savedToken = await AsyncStorage.getItem('tech_auth_token');
         const savedTech = await AsyncStorage.getItem('tech_auth_user');
         if (savedToken && savedTech) {
@@ -62,7 +69,7 @@ export const TechAuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <TechAuthContext.Provider value={{ technician, token, isLoading, signIn, signOut, updateTechnician }}>
+    <TechAuthContext.Provider value={{ technician, token, isLoggedIn, isLoading, signIn, signOut, updateTechnician }}>
       {children}
     </TechAuthContext.Provider>
   );
