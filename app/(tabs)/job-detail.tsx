@@ -20,6 +20,7 @@ import {
   TechStyles,
 } from "../src/components/theme";
 import {
+  TechPageHeader,
   SummaryTile,
   TechAvatar,
   TechBadge,
@@ -109,31 +110,8 @@ export default function JobDetailScreen() {
 
     return (
         <View style={TechStyles.screen}>
-            {/* Topbar */}
-            <View style={[TechStyles.topbar, { height: 64 }]}>
-            <TouchableOpacity onPress={() => router.back()}>
-                <Text style={{ fontSize: 22 }}>←</Text>
-            </TouchableOpacity>
-
-            <View style={{ flex: 1, marginLeft: 12 }}>
-                <Text
-                style={{
-                    fontSize: 11,
-                    color: "rgba(255,255,255,0.6)",
-                }}
-                >
-                Job Details
-                </Text>
-
-                <Text style={TechStyles.topbarTitle}>
-                Service #{job.id}
-                </Text>
-            </View>
-
-            <TechBadge
-                label={getStatusLabel(job.status)}
-            />
-            </View>
+            {/* PageHeader */}
+            <TechPageHeader title="Job Detail" onBack={() => router.back()} />
 
             <ScrollView
             contentContainerStyle={styles.scroll}

@@ -9,7 +9,7 @@ import { useTechAuth } from '../src/context/TechAuthContext';
 import { techProfileApi } from '../src/services/api';
 import { TechRootStackParamList } from '../src/types';
 import { TechColors, TechStyles, TechSpacing } from '../src/components/theme';
-import { TechCard, TechRowKV, TechButton, TechTopbar, TechAvatar, StatusDot } from '../src/components/ui';
+import { TechCard, TechRowKV, TechButton, TechPageHeader, TechAvatar, StatusDot } from '../src/components/ui';
 
 type Props = { navigation: NativeStackNavigationProp<TechRootStackParamList, 'TechProfile'> };
 
@@ -66,7 +66,8 @@ export default function TechProfileScreen({ navigation }: Props) {
 
   return (
     <View style={TechStyles.screen}>
-      <TechTopbar title="My Profile" onBack={() => router.back()} />
+      {/* PageHeader */}
+      <TechPageHeader title="My Profile" onBack={() => router.back()} />
 
       <ScrollView
         contentContainerStyle={styles.scroll}

@@ -12,7 +12,7 @@ import {
     View,
 } from 'react-native';
 import { TechColors, TechRadius, TechSpacing, TechStyles } from '../src/components/theme';
-import { TechButton, TechCard, TechTopbar } from '../src/components/ui';
+import { TechButton, TechCard, TechPageHeader } from '../src/components/ui';
 import { useTechAuth } from '../src/context/TechAuthContext';
 import { onsiteApi } from '../src/services/api';
 import { OnsiteStatus, TechRootStackParamList } from '../src/types';
@@ -84,7 +84,8 @@ export default function OnsiteProgressScreen() {
 
   return (
     <View style={TechStyles.screen}>
-      <TechTopbar title="Onsite Progress" onBack={() => router.back()} />
+      {/* PageHeader */}
+      <TechPageHeader title="Onsite Progress" onBack={() => router.back()} />
 
       <ScrollView
         contentContainerStyle={styles.scroll}

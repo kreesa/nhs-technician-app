@@ -148,19 +148,6 @@ export default async function DashboardScreen({ navigation }: Props) {
 
   return (
     <View style={TechStyles.screen}>
-      {/* Topbar */}
-      <View style={[TechStyles.topbar, { height: 64 }]}>
-        <TechAvatar initials={initials} size={38} />
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 11, color: "rgba(255,255,255,0.6)" }}>
-            Welcome back
-          </Text>
-          <Text style={TechStyles.topbarTitle}>{technician?.full_name}</Text>
-        </View>
-        <TouchableOpacity onPress={handleSignOut}>
-          <Text style={{ fontSize: 22 }}>⚙️</Text>
-        </TouchableOpacity>
-      </View>
 
       <ScrollView
         contentContainerStyle={styles.scroll}

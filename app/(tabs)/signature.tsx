@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { Path, Svg } from 'react-native-svg';
 import { TechColors, TechRadius, TechSpacing, TechStyles } from '../src/components/theme';
-import { TechButton, TechCard, TechTopbar } from '../src/components/ui';
+import { TechButton, TechCard, TechPageHeader } from '../src/components/ui';
 import { techJobApi } from '../src/services/api';
 import { TechRootStackParamList } from '../src/types';
 
@@ -97,7 +97,8 @@ export default function SignatureScreen() {
 
   return (
     <View style={TechStyles.screen}>
-      <TechTopbar title="Customer Signature" onBack={() => router.back()} />
+      {/* TechPageHeader */}
+      <TechPageHeader title="Customer Signature" onBack={() => router.back()} />
 
       <View style={{ flex: 1, padding: TechSpacing.lg, gap: 12 }}>
         {/* Instructions */}

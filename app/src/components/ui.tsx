@@ -8,8 +8,8 @@ import { TechColors, TechRadius, TechStyles } from './theme';
 // ─── Badge ────────────────────────────────────────────────────────────────────
 type BadgeVariant = 'blue' | 'green' | 'amber' | 'red' | 'gray' | 'orange';
 const badgeMap: Record<BadgeVariant, { bg: string; color: string }> = {
-  blue:   { bg: TechColors.brandBg,  color: TechColors.brand },
-  green:  { bg: TechColors.greenBg,  color: TechColors.green },
+  green:   { bg: TechColors.brandBg,  color: TechColors.brand },
+  blue:  { bg: TechColors.blueBg,  color: TechColors.blue },
   amber:  { bg: TechColors.amberBg,  color: TechColors.amber },
   red:    { bg: TechColors.redBg,    color: TechColors.red },
   gray:   { bg: '#E2E8F0',           color: '#64748B' },
@@ -81,17 +81,61 @@ export const TechRowKV = ({ label, value, last }: { label: string; value: string
 );
 
 // ─── Topbar ───────────────────────────────────────────────────────────────────
-export const TechTopbar = ({ title, onBack, right }: { title: string; onBack?: () => void; right?: React.ReactNode }) => (
+export const TechTopbar = ({ title, subtitle, onBack, right }: { title: string; onBack?: () => void; right?: React.ReactNode }) => (
   <View style={TechStyles.topbar}>
     {onBack && (
       <TouchableOpacity style={styles.backBtn} onPress={onBack} activeOpacity={0.8}>
         <Text style={{ color: TechColors.white, fontSize: 20 }}>‹</Text>
       </TouchableOpacity>
     )}
-    <Text style={TechStyles.topbarTitle}>{title}</Text>
+    <View style={{ flex: 1 }}>
+      {subtitle && <Text style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)' }}>{subtitle}</Text>}
+      <Text style={TechStyles.topbarTitle}>{title}</Text>
+    </View>
     {right}
   </View>
 );
+
+
+// ─── TechPageHeader ───────────────────────────────────────────────────────────────────
+interface TechPageHeaderProps {
+  title: string;
+  subtitle?: string;
+  onBack?: () => void;
+  right?: React.ReactNode;
+}
+
+export const TechPageHeader = ({
+  title,
+  subtitle,
+  onBack,
+  right,
+}: TechPageHeaderProps) => (
+  <View style={styles.TechPageHeader}>
+    <View style={styles.TechPageHeaderLeft}>
+      {onBack && (
+        <TouchableOpacity
+          style={styles.pageBackBtn}
+          onPress={onBack}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.pageBackIcon}>‹</Text>
+        </TouchableOpacity>
+      )}
+
+      <View style={styles.pageTitleWrap}>
+        {subtitle ? (
+          <Text style={styles.pageSubtitle}>{subtitle}</Text>
+        ) : null}
+
+        <Text style={styles.pageTitle}>{title}</Text>
+      </View>
+    </View>
+
+    {right}
+  </View>
+);
+
 
 // ─── Avatar ───────────────────────────────────────────────────────────────────
 export const TechAvatar = ({ initials, size = 44 }: { initials: string; size?: number }) => (
@@ -148,4 +192,52 @@ const styles = StyleSheet.create({
   },
   summaryVal: { fontSize: 20, fontWeight: '700', color: TechColors.text },
   summaryLabel: { fontSize: 11, color: TechColors.text2, textAlign: 'center' },
+
+  
+  // TechPageHeader
+  TechPageHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+
+  TechPageHeaderLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+  },
+
+  pageBackBtn: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 6,
+  },
+
+  pageBackIcon: {
+    fontSize: 26,
+    color: TechColors.text,
+    lineHeight: 24,
+    fontWeight: "600",
+  },
+
+  pageTitleWrap: {
+    flex: 1,
+  },
+
+  pageTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: TechColors.text,
+  },
+
+  pageSubtitle: {
+    fontSize: 10,
+    color: TechColors.text3,
+    marginBottom: 1,
+  },
 });

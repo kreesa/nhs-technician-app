@@ -12,7 +12,7 @@ import {
     View,
 } from 'react-native';
 import { TechColors, TechSpacing, TechStyles } from '../src/components/theme';
-import { TechButton, TechCard, TechTopbar } from '../src/components/ui';
+import { TechButton, TechCard, TechPageHeader } from '../src/components/ui';
 import { materialApi } from '../src/services/api';
 import { Material, TechRootStackParamList } from '../src/types';
 
@@ -100,7 +100,8 @@ export default function MaterialRequestScreen() {
 
   return (
     <View style={TechStyles.screen}>
-      <TechTopbar title="Request Materials" onBack={() => router.back()} />
+      {/* PageHeader */}
+      <TechPageHeader title="Request Materials" onBack={() => router.back()} />
 
       <ScrollView
         contentContainerStyle={styles.scroll}
