@@ -1,22 +1,32 @@
-import React from 'react';
+import React from "react";
 import {
-  View, Text, TouchableOpacity, ActivityIndicator,
-  StyleSheet, ViewStyle,
-} from 'react-native';
-import { TechColors, TechRadius, TechStyles } from './theme';
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from "react-native";
+import { TechColors, TechRadius, TechStyles } from "./theme";
 
 // ─── Badge ────────────────────────────────────────────────────────────────────
-type BadgeVariant = 'blue' | 'green' | 'amber' | 'red' | 'gray' | 'orange';
+type BadgeVariant = "blue" | "green" | "amber" | "red" | "gray" | "orange";
 const badgeMap: Record<BadgeVariant, { bg: string; color: string }> = {
-  green:   { bg: TechColors.brandBg,  color: TechColors.brand },
-  blue:  { bg: TechColors.blueBg,  color: TechColors.blue },
-  amber:  { bg: TechColors.amberBg,  color: TechColors.amber },
-  red:    { bg: TechColors.redBg,    color: TechColors.red },
-  gray:   { bg: '#E2E8F0',           color: '#64748B' },
+  green: { bg: TechColors.brandBg, color: TechColors.brand },
+  blue: { bg: TechColors.blueBg, color: TechColors.blue },
+  amber: { bg: TechColors.amberBg, color: TechColors.amber },
+  red: { bg: TechColors.redBg, color: TechColors.red },
+  gray: { bg: "#E2E8F0", color: "#64748B" },
   orange: { bg: TechColors.accentBg, color: TechColors.accent },
 };
 
-export const TechBadge = ({ label, variant = 'gray' }: { label: string; variant?: BadgeVariant }) => {
+export const TechBadge = ({
+  label,
+  variant = "gray",
+}: {
+  label: string;
+  variant?: BadgeVariant;
+}) => {
   const s = badgeMap[variant];
   return (
     <View style={[styles.badge, { backgroundColor: s.bg }]}>
@@ -32,19 +42,35 @@ interface TechButtonProps {
   loading?: boolean;
   disabled?: boolean;
   style?: ViewStyle;
-  variant?: 'primary' | 'accent' | 'outline' | 'danger';
+  variant?: "primary" | "accent" | "outline" | "danger";
   icon?: string;
 }
 
-export const TechButton = ({ label, onPress, loading, disabled, style, variant = 'primary', icon }: TechButtonProps) => {
-  const btnStyle = variant === 'accent' ? TechStyles.btnAccent
-    : variant === 'outline' ? TechStyles.btnOutline
-    : variant === 'danger' ? TechStyles.btnDanger
-    : TechStyles.btnPrimary;
-  const txtStyle = variant === 'accent' ? TechStyles.btnAccentText
-    : variant === 'outline' ? TechStyles.btnOutlineText
-    : variant === 'danger' ? TechStyles.btnDangerText
-    : TechStyles.btnPrimaryText;
+export const TechButton = ({
+  label,
+  onPress,
+  loading,
+  disabled,
+  style,
+  variant = "primary",
+  icon,
+}: TechButtonProps) => {
+  const btnStyle =
+    variant === "accent"
+      ? TechStyles.btnAccent
+      : variant === "outline"
+        ? TechStyles.btnOutline
+        : variant === "danger"
+          ? TechStyles.btnDanger
+          : TechStyles.btnPrimary;
+  const txtStyle =
+    variant === "accent"
+      ? TechStyles.btnAccentText
+      : variant === "outline"
+        ? TechStyles.btnOutlineText
+        : variant === "danger"
+          ? TechStyles.btnDangerText
+          : TechStyles.btnPrimaryText;
 
   return (
     <TouchableOpacity
@@ -53,19 +79,30 @@ export const TechButton = ({ label, onPress, loading, disabled, style, variant =
       disabled={disabled || loading}
       activeOpacity={0.85}
     >
-      {loading
-        ? <ActivityIndicator color={variant === 'outline' ? TechColors.brand : TechColors.white} />
-        : <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-            {icon && <Text style={{ fontSize: 16 }}>{icon}</Text>}
-            <Text style={txtStyle}>{label}</Text>
-          </View>
-      }
+      {loading ? (
+        <ActivityIndicator
+          color={variant === "outline" ? TechColors.brand : TechColors.white}
+        />
+      ) : (
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+          {icon && <Text style={{ fontSize: 16 }}>{icon}</Text>}
+          <Text style={txtStyle}>{label}</Text>
+        </View>
+      )}
     </TouchableOpacity>
   );
 };
 
 // ─── Card ─────────────────────────────────────────────────────────────────────
-export const TechCard = ({ children, label, style }: { children: React.ReactNode; label?: string; style?: ViewStyle }) => (
+export const TechCard = ({
+  children,
+  label,
+  style,
+}: {
+  children: React.ReactNode;
+  label?: string;
+  style?: ViewStyle;
+}) => (
   <View style={[TechStyles.card, style]}>
     {label && <Text style={TechStyles.cardLabel}>{label}</Text>}
     {children}
@@ -73,7 +110,15 @@ export const TechCard = ({ children, label, style }: { children: React.ReactNode
 );
 
 // ─── Row KV ───────────────────────────────────────────────────────────────────
-export const TechRowKV = ({ label, value, last }: { label: string; value: string; last?: boolean }) => (
+export const TechRowKV = ({
+  label,
+  value,
+  last,
+}: {
+  label: string;
+  value: string;
+  last?: boolean;
+}) => (
   <View style={[TechStyles.rowKV, last && { borderBottomWidth: 0 }]}>
     <Text style={TechStyles.rowK}>{label}</Text>
     <Text style={TechStyles.rowV}>{value}</Text>
@@ -81,21 +126,37 @@ export const TechRowKV = ({ label, value, last }: { label: string; value: string
 );
 
 // ─── Topbar ───────────────────────────────────────────────────────────────────
-export const TechTopbar = ({ title, subtitle, onBack, right }: { title: string; onBack?: () => void; right?: React.ReactNode }) => (
+export const TechTopbar = ({
+  title,
+  subtitle,
+  onBack,
+  right,
+}: {
+  title: string;
+  onBack?: () => void;
+  right?: React.ReactNode;
+}) => (
   <View style={TechStyles.topbar}>
     {onBack && (
-      <TouchableOpacity style={styles.backBtn} onPress={onBack} activeOpacity={0.8}>
+      <TouchableOpacity
+        style={styles.backBtn}
+        onPress={onBack}
+        activeOpacity={0.8}
+      >
         <Text style={{ color: TechColors.white, fontSize: 20 }}>‹</Text>
       </TouchableOpacity>
     )}
     <View style={{ flex: 1 }}>
-      {subtitle && <Text style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)' }}>{subtitle}</Text>}
+      {subtitle && (
+        <Text style={{ fontSize: 11, color: "rgba(255,255,255,0.6)" }}>
+          {subtitle}
+        </Text>
+      )}
       <Text style={TechStyles.topbarTitle}>{title}</Text>
     </View>
     {right}
   </View>
 );
-
 
 // ─── TechPageHeader ───────────────────────────────────────────────────────────────────
 interface TechPageHeaderProps {
@@ -124,9 +185,7 @@ export const TechPageHeader = ({
       )}
 
       <View style={styles.pageTitleWrap}>
-        {subtitle ? (
-          <Text style={styles.pageSubtitle}>{subtitle}</Text>
-        ) : null}
+        {subtitle ? <Text style={styles.pageSubtitle}>{subtitle}</Text> : null}
 
         <Text style={styles.pageTitle}>{title}</Text>
       </View>
@@ -136,29 +195,68 @@ export const TechPageHeader = ({
   </View>
 );
 
-
 // ─── Avatar ───────────────────────────────────────────────────────────────────
-export const TechAvatar = ({ initials, size = 44 }: { initials: string; size?: number }) => (
-  <View style={[styles.avatar, { width: size, height: size, borderRadius: size / 2 }]}>
-    <Text style={{ fontSize: size * 0.34, fontWeight: '700', color: TechColors.brand }}>{initials}</Text>
+export const TechAvatar = ({
+  initials,
+  size = 44,
+}: {
+  initials: string;
+  size?: number;
+}) => (
+  <View
+    style={[
+      styles.avatar,
+      { width: size, height: size, borderRadius: size / 2 },
+    ]}
+  >
+    <Text
+      style={{
+        fontSize: size * 0.34,
+        fontWeight: "700",
+        color: TechColors.brand,
+      }}
+    >
+      {initials}
+    </Text>
   </View>
 );
 
 // ─── Loading / Error ──────────────────────────────────────────────────────────
-export const TechLoading = ({ message = 'Loading...' }: { message?: string }) => (
+export const TechLoading = ({
+  message = "Loading...",
+}: {
+  message?: string;
+}) => (
   <View style={[TechStyles.screen, TechStyles.center]}>
     <ActivityIndicator size="large" color={TechColors.brand} />
-    <Text style={{ marginTop: 12, color: TechColors.text2, fontSize: 14 }}>{message}</Text>
+    <Text style={{ marginTop: 12, color: TechColors.text2, fontSize: 14 }}>
+      {message}
+    </Text>
   </View>
 );
 
 // ─── Status dot ──────────────────────────────────────────────────────────────
 export const StatusDot = ({ active }: { active: boolean }) => (
-  <View style={[styles.statusDot, { backgroundColor: active ? TechColors.green : TechColors.text3 }]} />
+  <View
+    style={[
+      styles.statusDot,
+      { backgroundColor: active ? TechColors.brand : TechColors.text3 },
+    ]}
+  />
 );
 
 // ─── Summary Tile ─────────────────────────────────────────────────────────────
-export const SummaryTile = ({ icon, label, value, color }: { icon: string; label: string; value: string; color: string }) => (
+export const SummaryTile = ({
+  icon,
+  label,
+  value,
+  color,
+}: {
+  icon: string;
+  label: string;
+  value: string;
+  color: string;
+}) => (
   <View style={[styles.summaryTile, { borderLeftColor: color }]}>
     <Text style={{ fontSize: 26 }}>{icon}</Text>
     <Text style={styles.summaryVal}>{value}</Text>
@@ -171,29 +269,41 @@ export const TechDivider = () => <View style={TechStyles.divider} />;
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
-  badge: { paddingHorizontal: 10, paddingVertical: 3, borderRadius: TechRadius.full },
-  badgeText: { fontSize: 11, fontWeight: '600' },
+  badge: {
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: TechRadius.full,
+  },
+  badgeText: { fontSize: 11, fontWeight: "600" },
   backBtn: {
-    width: 32, height: 32, borderRadius: 16,
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    alignItems: 'center', justifyContent: 'center', marginRight: 4,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "rgba(255,255,255,0.15)",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 4,
   },
   avatar: {
     backgroundColor: TechColors.brandBg,
-    alignItems: 'center', justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   statusDot: { width: 10, height: 10, borderRadius: 5 },
   summaryTile: {
-    flex: 1, backgroundColor: TechColors.cardBg,
-    borderRadius: TechRadius.lg, padding: 14,
-    alignItems: 'center', gap: 4,
-    borderLeftWidth: 3, borderWidth: 0.5,
+    flex: 1,
+    backgroundColor: TechColors.cardBg,
+    borderRadius: TechRadius.lg,
+    padding: 14,
+    alignItems: "center",
+    gap: 4,
+    borderLeftWidth: 3,
+    borderWidth: 0.5,
     borderColor: TechColors.border,
   },
-  summaryVal: { fontSize: 20, fontWeight: '700', color: TechColors.text },
-  summaryLabel: { fontSize: 11, color: TechColors.text2, textAlign: 'center' },
+  summaryVal: { fontSize: 20, fontWeight: "700", color: TechColors.text },
+  summaryLabel: { fontSize: 11, color: TechColors.text2, textAlign: "center" },
 
-  
   // TechPageHeader
   TechPageHeader: {
     flexDirection: "row",

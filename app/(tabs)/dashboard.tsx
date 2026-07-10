@@ -1,4 +1,5 @@
 import * as Location from "expo-location";
+import { router } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   Alert,
@@ -9,7 +10,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { router } from "expo-router";
 import {
   TechColors,
   TechRadius,
@@ -18,21 +18,15 @@ import {
 } from "../src/components/theme";
 import {
   SummaryTile,
-  TechAvatar,
   TechBadge,
-  TechCard,
+  TechCard
 } from "../src/components/ui";
 import { useTechAuth } from "../src/context/TechAuthContext";
 import { summaryApi, techJobApi, techProfileApi } from "../src/services/api";
 import {
   AssignedJob,
-  MonthlySummary,
-  TechRootStackParamList,
+  MonthlySummary
 } from "../src/types";
-
-type Props = {
-  navigation: NativeStackNavigationProp<TechRootStackParamList, "Dashboard">;
-};
 
 function jobStatusVariant(status: string) {
   switch (status) {
@@ -82,7 +76,6 @@ export default async function DashboardScreen({ navigation }: Props) {
       const sum = await summaryApi.getMonthlySummary();
       console.log("summary ok", sum);
       setSummary(sum);
-
     } catch (e) {
       console.error(e);
     } finally {
@@ -148,7 +141,6 @@ export default async function DashboardScreen({ navigation }: Props) {
 
   return (
     <View style={TechStyles.screen}>
-
       <ScrollView
         contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}
@@ -226,7 +218,6 @@ export default async function DashboardScreen({ navigation }: Props) {
             </View>
           </View>
         )}
-
 
         {/* Today's Jobs */}
         <Text style={styles.sectionTitle}>Today's schedule</Text>
@@ -314,10 +305,10 @@ export default async function DashboardScreen({ navigation }: Props) {
                     i === pastJobs.length - 1 && { borderBottomWidth: 0 },
                   ]}
                   onPress={() =>
-                     router.push({
-                        pathname: "/job-detail",
-                        params: { jobId: String(job.id) },
-                      })
+                    router.push({
+                      pathname: "/job-detail",
+                      params: { jobId: String(job.id) },
+                    })
                   }
                 >
                   <View style={{ flex: 1 }}>

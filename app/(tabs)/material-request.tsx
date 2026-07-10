@@ -1,5 +1,4 @@
 import { RouteProp } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
 import { router } from "expo-router";
 import {
