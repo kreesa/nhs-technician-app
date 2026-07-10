@@ -123,10 +123,10 @@ export async function logout() {
 =========================================================== */
 
 export const techProfileApi = {
-  getProfile: (): Promise<Technician> => request("/api/technician/profile"),
+  getProfile: (): Promise<Technician> => request("/api/auth/me"),
 
   updateProfile: (data: Partial<Technician>): Promise<Technician> =>
-    request("/api/technician/profile", {
+    request("/api/auth/me", {
       method: "PUT",
       body: JSON.stringify(data),
     }),
