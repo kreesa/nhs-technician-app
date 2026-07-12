@@ -46,7 +46,6 @@ function jobStatusVariant(status: string) {
 export default function DashboardScreen() {
   const { technician, updateTechnician, signOut } = useTechAuth();
   const [todayJobs, setTodayJobs] = useState<AssignedJob[]>([]);
-  const [pastJobs, setPastJobs] = useState<AssignedJob[]>([]);
   const [summary, setSummary] = useState<MonthlySummary | null>(null);
   const [available, setAvailable] = useState(technician?.is_available ?? true);
   const [refreshing, setRefreshing] = useState(false);
@@ -65,10 +64,6 @@ export default function DashboardScreen() {
       const jobs = await techJobApi.getTodaysJobs();
       console.log("jobs:", jobs);
       setTodayJobs(jobs);
-
-      const past = await techJobApi.getPastJobs();
-      console.log("past:", past);
-      setPastJobs((past ?? []).slice(0, 5));
 
       const sum = await summaryApi.getMonthlySummary();
       console.log("summary:", sum);
@@ -290,54 +285,6 @@ export default function DashboardScreen() {
           })
         )}
 
-        {/* Past Jobs */}
-        {pastJobs.length > 0 && (
-          <>
-            <Text style={styles.sectionTitle}>Recent history</Text>
-            <TechCard>
-              {pastJobs.map((job, i) => (
-                <TouchableOpacity
-                  key={job.id}
-                  style={[
-                    styles.histRow,
-                    i === pastJobs.length - 1 && { borderBottomWidth: 0 },
-                  ]}
-                  onPress={() =>
-                    router.push({
-                      pathname: "/job-detail",
-                      params: { jobId: String(job.id) },
-                    })
-                  }
-                >
-                  <View style={{ flex: 1 }}>
-                    <Text
-                      style={{
-                        fontSize: 13,
-                        fontWeight: "500",
-                        color: TechColors.text,
-                      }}
-                    >
-                      {job.service_category_id} — {job.service_subcategory_id}
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: 11,
-                        color: TechColors.text3,
-                        marginTop: 1,
-                      }}
-                    >
-                      {job.scheduled_for} · {job.customer_id?.full_name}
-                    </Text>
-                  </View>
-                  <TechBadge
-                    label={job.status}
-                    variant={jobStatusVariant(job.status) as any}
-                  />
-                </TouchableOpacity>
-              ))}
-            </TechCard>
-          </>
-        )}
       </ScrollView>
     </View>
   );

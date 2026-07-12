@@ -159,7 +159,7 @@ export const techProfileApi = {
       }),
     });
   },
-
+}
 /* ===========================================================
    JOBS
 =========================================================== */
@@ -179,35 +179,7 @@ export const techJobApi = {
     const response = await request(`/api/technicians/${technicianId}/assigned-jobs`);
     return response.data;
   },
-  // getTodaysJobs: async (): Promise<AssignedJob[]> => {
-  //   const technicianId = await getTechnicianId();
-  //   const response = await request(`/api/technicians/${technicianId}/assigned-jobs`);
-
-  //   const todayStr = new Date().toDateString(); // e.g. "Sun Jul 12 2026"
-
-  //   const todayJobs = (response.data as AssignedJob[]).filter(job => {
-  //     const scheduledStr = new Date(job.scheduled_for).toDateString();
-  //     return scheduledStr === todayStr;
-  //   });
-
-  //   return todayJobs;
-  // },
-
-  getPastJobs: async (): Promise<AssignedJob[]> => {
-    const technicianId = await getTechnicianId();
-    const response = await request(`/api/technicians/${technicianId}/assigned-jobs`);
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const pastJobs = (response.data as AssignedJob[]).filter(job => {
-      const scheduled = new Date(job.scheduled_for);
-      scheduled.setHours(0, 0, 0, 0);
-      return scheduled < today; // Date < Date works correctly (coerces to number), unlike ==
-    });
-
-    return pastJobs;
-  },
+ 
 
   getJobDetail: (jobId: number): Promise<AssignedJob> =>
     request(`/api/jobs/${jobId}`),
