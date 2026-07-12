@@ -156,21 +156,38 @@ export const techProfileApi = {
    JOBS
 =========================================================== */
 // technician_id
-const getUserId = async (): Promise<string | null> => {
-  return AsyncStorage.getItem("user_id");
+const getTechnicianId = async (): Promise<number | null> => {
+  const tech = await AsyncStorage.getItem("tech_auth_user");
+  if (!tech) return null;
+  return JSON.parse(tech).id;
 };
 
 export const techJobApi = {
 
-  getTodaysJobs: async (): Promise<AssignedJob[]> =>{
-    const userId = await getUserId();
-    const response = await request(`/api/technicians/${userId}/assigned-jobs`);
+  getTodaysJobs: async (): Promise<AssignedJob[]> => {
+    const technicianId = await getTechnicianId();
+    // console.log("Technician ID:", technicianId);
+    const response = await request(`/api/technicians/${technicianId}/assigned-jobs`);
     return response.data;
   },
 
   getPastJobs: async (): Promise<AssignedJob[]> =>{
-    const userId = await getUserId();
-    return request(`/api/technicians/${userId}/assigned-jobs`);
+    const technicianId = await getTechnicianId();
+    const response = await request(`/api/technicians/${technicianId}/assigned-jobs`);
+    console.log("PastJobs:", response.data);
+    // filter data that are scheduled for before today
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const pastJobs = (response.data as AssignedJob[]).filter(job => {
+      const scheduled = new Date(job.schedule_for);
+      scheduled.setHours(0, 0, 0, 0);
+
+      return scheduled < today;
+    });
+
+    return pastJobs;
+
   },
 
   getJobDetail: (jobId: number): Promise<AssignedJob> =>
@@ -270,13 +287,13 @@ export const summaryApi = {
 
   // getMonthlySummary: async (): Promise<MonthlySummary[]> =>{
   //   const userId = await AsyncStorage.getItem("user_id");
-  //   return request(`/api/technicians/${userId}/monthly-summary`);
+  //   return request(`/api/technicians/${technicianId}/monthly-summary`);
   // },
 // getMonthlySummary: async (): Promise<MonthlySummary> => {
 //   const userId = await AsyncStorage.getItem("user_id");
 
 //   const response = await request(
-//     `/api/technicians/${userId}/monthly-summary`
+//     `/api/technicians/${technicianId}/monthly-summary`
 //   );
 
 //   return response.data;

@@ -270,7 +270,7 @@ export default function JobDetailScreen() {
 
             <OvertimeLogModal
               visible={overtimeModalVisible}
-              jobId={currentJobId} // whatever variable holds the active job id on this screen
+              jobId={jobId} // currentJobId - whatever variable holds the active job id on this screen
               onClose={() => setOvertimeModalVisible(false)}
               onSuccess={() => {/* refresh logs if you display them */}}
             />

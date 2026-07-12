@@ -21,7 +21,7 @@ import {
 import { useTechAuth } from "../src/context/TechAuthContext";
 import { techProfileApi } from "../src/services/api";
 
-export default function TechProfileScreen({ navigation }: Props) {
+export default function TechProfileScreen() {
   const { technician, signOut, updateTechnician } = useTechAuth();
 
   const [name, setName] = useState(technician?.full_name ?? "");

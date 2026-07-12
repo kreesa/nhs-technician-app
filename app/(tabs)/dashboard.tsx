@@ -43,7 +43,7 @@ function jobStatusVariant(status: string) {
   }
 }
 
-export default async function DashboardScreen({ navigation }: Props) {
+export default function DashboardScreen() {
   const { technician, updateTechnician, signOut } = useTechAuth();
   const [todayJobs, setTodayJobs] = useState<AssignedJob[]>([]);
   const [pastJobs, setPastJobs] = useState<AssignedJob[]>([]);
@@ -62,20 +62,18 @@ export default async function DashboardScreen({ navigation }: Props) {
 
   const loadData = useCallback(async () => {
     try {
-      const [jobs, past] = await Promise.all([
-        techJobApi.getTodaysJobs(),
-        techJobApi.getPastJobs(),
-      ]);
-
+      const jobs = await techJobApi.getTodaysJobs();
       console.log("jobs:", jobs);
-      console.log("past:", past);
-
       setTodayJobs(jobs);
-      setPastJobs(past.slice(0, 5));
+
+      const past = await techJobApi.getPastJobs();
+      console.log("past:", past);
+      setPastJobs((past ?? []).slice(0, 5));
 
       const sum = await summaryApi.getMonthlySummary();
-      console.log("summary ok", sum);
+      console.log("summary:", sum);
       setSummary(sum);
+
     } catch (e) {
       console.error(e);
     } finally {
@@ -99,8 +97,8 @@ export default async function DashboardScreen({ navigation }: Props) {
           (loc) => {
             techProfileApi
               .updateGpsLocation(
-                loc.coords.site_latitude,
-                loc.coords.site_longitude,
+                loc.coords.latitude,
+                loc.coords.longitude,
               )
               .catch(() => {});
           },
@@ -135,9 +133,9 @@ export default async function DashboardScreen({ navigation }: Props) {
       { text: "Sign out", style: "destructive", onPress: signOut },
     ]);
 
-  console.log("todayJobs:", todayJobs);
-  console.log("isArray:", Array.isArray(todayJobs));
-  console.log("length:", todayJobs?.length);
+  // console.log("todayJobs:", todayJobs);
+  // console.log("isArray:", Array.isArray(todayJobs));
+  // console.log("length:", todayJobs?.length);
 
   return (
     <View style={TechStyles.screen}>
@@ -297,7 +295,7 @@ export default async function DashboardScreen({ navigation }: Props) {
           <>
             <Text style={styles.sectionTitle}>Recent history</Text>
             <TechCard>
-              {pastJobs.map((jobs, i) => (
+              {pastJobs.map((job, i) => (
                 <TouchableOpacity
                   key={job.id}
                   style={[
@@ -319,7 +317,7 @@ export default async function DashboardScreen({ navigation }: Props) {
                         color: TechColors.text,
                       }}
                     >
-                      {jobs.service_category_id} — {jobs.service_subcategory_id}
+                      {job.service_category_id} — {job.service_subcategory_id}
                     </Text>
                     <Text
                       style={{
