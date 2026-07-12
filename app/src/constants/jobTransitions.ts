@@ -28,38 +28,38 @@ export const JOB_TRANSITIONS: Record<
     "cancelled",
   ],
 
-  awaiting_approval: [
-    "approved_proxy",
-    "rejected_proxy",
-    "cancelled",
-  ],
+  // awaiting_approval: [
+  //   "approved_proxy",
+  //   "rejected_proxy",
+  //   "cancelled",
+  // ],
 
-  approved_proxy: [
-    "in_progress",
-    "awaiting_material",
-  ],
+  // approved_proxy: [
+  //   "in_progress",
+  //   "awaiting_material",
+  // ],
 
-  rejected_proxy: ["cancelled"],
+  // rejected_proxy: ["cancelled"],
 
-  awaiting_material: [
-    "material_ready",
-    "cancelled",
-  ],
+  // awaiting_material: [
+  //   "material_ready",
+  //   "cancelled",
+  // ],
 
-  material_ready: [
-    "in_progress",
-    "cancelled",
-  ],
+  // material_ready: [
+  //   "in_progress",
+  //   "cancelled",
+  // ],
 
   in_progress: [
     "completed",
-    "awaiting_approval",
-    "awaiting_material",
+    // "awaiting_approval",
+    // "awaiting_material",
     "cancelled",
   ],
 
   completed: ["invoiced"],
-  invoiced: ["paid"],
+  // invoiced: ["paid"],
   paid: [],
   cancelled: [],
 };
@@ -84,9 +84,13 @@ export function getAllowedTransitions(
 export function getStatusLabel(
   status: string
 ) {
-  return status
-    .replaceAll("_", " ")
-    .replace(/\b\w/g, (c) =>
-      c.toUpperCase()
-    );
+  switch (status) {
+    case "invoiced":
+      return "Generate Invoice";
+    default:
+      return status
+        .replaceAll("_", " ")
+        .replace(/\b\w/g, (c) =>
+          c.toUpperCase()
+        );
 }
