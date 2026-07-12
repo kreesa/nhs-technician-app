@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { Technician } from '../types';
 import { router } from "expo-router";
+import * as SecureStore from 'expo-secure-store';
 
 interface TechAuthContextType {
   technician: Technician | null;
@@ -52,14 +53,16 @@ export const TechAuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signIn = async (newToken: string, newTech: Technician) => {
-    await AsyncStorage.setItem('tech_auth_token', newToken);
+    // await AsyncStorage.setItem('tech_auth_token', newToken);
+    await SecureStore.setItemAsync('tech_auth_token', newToken);
     await AsyncStorage.setItem('tech_auth_user', JSON.stringify(newTech));
     setToken(newToken);
     setTechnician(newTech);
   };
 
   const signOut = async () => {
-    await AsyncStorage.removeItem('tech_auth_token');
+    // await AsyncStorage.removeItem('tech_auth_token');
+    await SecureStore.deleteItemAsync('tech_auth_token');
     await AsyncStorage.removeItem('tech_auth_user');
     setToken(null);
     setTechnician(null);
