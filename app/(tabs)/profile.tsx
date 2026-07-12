@@ -11,7 +11,7 @@ import {
   TechRowKV,
 } from "../src/components/ui";
 import { useTechAuth } from "../src/context/TechAuthContext";
-import { techProfileApi } from "../src/services/api";
+import { techProfileApi, summaryApi } from "../src/services/api";
 import { Technician } from "../src/types";
 
 export default function TechProfileScreen() {
@@ -20,6 +20,8 @@ export default function TechProfileScreen() {
   const [profile, setProfile] = useState<Technician | null>(null);
   const [loading, setLoading] = useState(true);
   const [available, setAvailable] = useState(false);
+
+  const [summary, setSummary] = useState<MonthlySummary | null>(null);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -40,7 +42,17 @@ export default function TechProfileScreen() {
       }
     };
 
+    const loadSummary = async () => {
+      try {
+        const data = await summaryApi.getMonthlySummary();
+        setSummary(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+              
     loadProfile();
+    loadSummary(); 
   }, []);
 
   const handleToggleAvailability = async (val: boolean) => {
@@ -80,17 +92,22 @@ export default function TechProfileScreen() {
           <TechAvatar initials={initials} size={72} />
 
           <Text style={styles.nameText}>
-            {loading ? "Loading..." : (profile?.full_name ?? "-")}
+            {loading ? "Loading..." : (profile?.name ?? "-")}
           </Text>
 
           <Text style={styles.specText}>
-            {profile?.specialization ?? "Technician"}
+            {(profile?.specialization ?? "Technician")}
+          </Text>
+
+          <Text style={styles.specText}>
+            {summary?.month_start ? `Member since ${summary.month_start}` : ""}
           </Text>
 
           <View style={styles.ratingRow}>
-            <Text style={{ color: TechColors.amber }}>★</Text>
+            {/* <Text style={{ color: TechColors.amber }}>★</Text> */}
             <Text style={{ fontSize: 13, color: TechColors.text2 }}>
-              {profile?.rating ?? "—"} · {profile?.total_jobs ?? 0} jobs completed
+              {/* {profile?.rating ?? "—"} · */}
+               {summary?.completed_jobs_count ? `${summary.completed_jobs_count}` : "0"} jobs completed
             </Text>
           </View>
         </View>
