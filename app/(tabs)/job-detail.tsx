@@ -260,7 +260,30 @@ export default function JobDetailScreen() {
                 </View>
               </TechCard>
             )}
-            {/* Actions */}
+
+            {/* Confirmation Signature from Customer */}
+            {job.status === "paid" && !job.signature_path && (
+            <TechCard label="Confirmation Signature">
+              <View style={{ padding: 14 }}>
+                <Text style={{ fontSize: 13, color: TechColors.text2, marginBottom: 10 }}>
+                  Please collect the customer's signature to complete this job.
+                </Text>
+                <TechButton
+                  label="Get Signature"
+                  onPress={() =>
+                    router.push({
+                      pathname: "/signature",
+                      params: { serviceId: String(job.id) },
+                    })
+                  }
+                />
+              </View>
+            </TechCard>
+          )}
+
+
+
+            {/* Available Actions */}
             {actions.length > 0 && (
                 <>
                 <Text style={styles.sectionTitle}>

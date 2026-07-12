@@ -1,306 +1,129 @@
-import { RouteProp } from "@react-navigation/native";
-import { router } from "expo-router";
 import React, { useRef, useState } from "react";
-import {
-  Alert,
-  GestureResponderEvent,
-  PanResponder,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { Path, Svg } from "react-native-svg";
-import {
-  TechColors,
-  TechRadius,
-  TechSpacing,
-  TechStyles,
-} from "../src/components/theme";
-import { TechButton, TechCard, TechPageHeader } from "../src/components/ui";
+import { View, StyleSheet, Text, Alert, ActivityIndicator } from "react-native";
+import SignatureScreen, { SignatureViewRef } from "react-native-signature-canvas";
+import { router, useLocalSearchParams } from "expo-router";
+import { TechPageHeader, TechButton } from "../src/components/ui";
+import { TechColors, TechStyles, TechSpacing } from "../src/components/theme";
 import { techJobApi } from "../src/services/api";
-import { TechRootStackParamList } from "../src/types";
 
-type Props = {
-  route: RouteProp<TechRootStackParamList, "Signature">;
-};
 
-interface Point {
-  x: number;
-  y: number;
-}
-interface Stroke {
-  points: Point[];
-}
+export default function SignatureCapture() {
+  const { serviceId } = useLocalSearchParams<{ serviceId: string }>();
+  const servId = Number(serviceId);
+  const sigRef = useRef<SignatureViewRef>(null);
 
-export default function SignatureScreen() {
-  const { jobId } = route.params;
-  const [strokes, setStrokes] = useState<Stroke[]>([]);
-  const [currentStroke, setCurrentStroke] = useState<Point[]>([]);
   const [saving, setSaving] = useState(false);
-  const [confirmed, setConfirmed] = useState(false);
-  const isDrawing = useRef(false);
+  const [hasSigned, setHasSigned] = useState(false);
 
-  const panResponder = PanResponder.create({
-    onStartShouldSetPanResponder: () => true,
-    onMoveShouldSetPanResponder: () => true,
-    onPanResponderGrant: (e: GestureResponderEvent) => {
-      const { locationX, locationY } = e.nativeEvent;
-      isDrawing.current = true;
-      setCurrentStroke([{ x: locationX, y: locationY }]);
-    },
-    onPanResponderMove: (e: GestureResponderEvent) => {
-      if (!isDrawing.current) return;
-      const { locationX, locationY } = e.nativeEvent;
-      setCurrentStroke((prev) => [...prev, { x: locationX, y: locationY }]);
-    },
-    onPanResponderRelease: () => {
-      isDrawing.current = false;
-      setStrokes((prev) => [...prev, { points: currentStroke }]);
-      setCurrentStroke([]);
-    },
-  });
+  // Called when the pad has content vs is empty
+  const handleBegin = () => setHasSigned(true);
 
-  const clear = () => {
-    setStrokes([]);
-    setCurrentStroke([]);
-  };
-
-  const strokeToPath = (points: Point[]): string => {
-    if (points.length === 0) return "";
-    const [first, ...rest] = points;
-    return (
-      `M ${first.x} ${first.y} ` + rest.map((p) => `L ${p.x} ${p.y}`).join(" ")
-    );
-  };
-
-  const hasSignature = strokes.length > 0 || currentStroke.length > 0;
-
-  const handleSubmit = async () => {
-    if (!hasSignature) {
-      Alert.alert(
-        "Signature required",
-        "Please ask the customer to sign above.",
-      );
-      return;
-    }
-    if (!confirmed) {
-      Alert.alert(
-        "Confirm",
-        "Does the customer confirm the work is complete and they agree to payment?",
-        [
-          { text: "Cancel", style: "cancel" },
-          { text: "Yes, confirm", onPress: () => setConfirmed(true) },
-        ],
-      );
-      return;
-    }
-
+  // Called with base64 PNG data URI when user taps "confirm" inside the pad
+  const handleOK = async (signature: string) => {
     setSaving(true);
     try {
-      // In production, capture SVG as image and upload
-      // For now, we send a placeholder URL after confirmation
-      const signatureUrl = `signature_job_${jobId}_${Date.now()}.png`;
-      await techJobApi.uploadSignature(jobId, signatureUrl);
-      Alert.alert(
-        "✅ Complete",
-        "Signature collected. Job marked as complete!",
-        [{ text: "Done", onPress: () => navigation.navigate("Dashboard") }],
-      );
+      await techJobApi.uploadSignature(servId, signature);
+      Alert.alert("Signed", "Signature saved successfully.");
+      router.back();
     } catch (err: any) {
-      Alert.alert("Error", err.message);
+      Alert.alert("Error", err.message || "Failed to save signature.");
     } finally {
       setSaving(false);
     }
   };
 
+  const handleEmpty = () => {
+    Alert.alert("Signature required", "Please sign before confirming.");
+  };
+
+  const handleConfirm = () => {
+    sigRef.current?.readSignature(); // triggers handleOK or handleEmpty
+  };
+
+  const handleClear = () => {
+    sigRef.current?.clearSignature();
+    setHasSigned(false);
+  };
+
   return (
     <View style={TechStyles.screen}>
-      {/* TechPageHeader */}
       <TechPageHeader title="Customer Signature" onBack={() => router.back()} />
 
-      <View style={{ flex: 1, padding: TechSpacing.lg, gap: 12 }}>
-        {/* Instructions */}
-        <TechCard>
-          <View
-            style={{ flexDirection: "row", gap: 10, alignItems: "flex-start" }}
-          >
-            <Text style={{ fontSize: 20 }}>✍️</Text>
-            <View style={{ flex: 1 }}>
-              <Text
-                style={{
-                  fontSize: 14,
-                  fontWeight: "600",
-                  color: TechColors.text,
-                  marginBottom: 4,
-                }}
-              >
-                Collect customer signature
-              </Text>
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: TechColors.text2,
-                  lineHeight: 18,
-                }}
-              >
-                Hand your phone to the customer and ask them to sign below to
-                confirm the work is complete and they agree to the payment.
-              </Text>
-            </View>
-          </View>
-        </TechCard>
+      <Text style={styles.hint}>
+        Please have the customer sign below to confirm payment received.
+      </Text>
 
-        {/* Signature Pad */}
-        <View style={styles.padContainer}>
-          <View style={styles.padHeader}>
-            <Text style={styles.padLabel}>Customer signature</Text>
-            <TouchableOpacity onPress={clear} style={styles.clearBtn}>
-              <Text style={styles.clearBtnText}>Clear</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.pad} {...panResponder.panHandlers}>
-            {!hasSignature && (
-              <View style={styles.padPlaceholder}>
-                <Text style={styles.padPlaceholderText}>Sign here</Text>
-              </View>
-            )}
-            <Svg style={StyleSheet.absoluteFill}>
-              {strokes.map((stroke, i) => (
-                <Path
-                  key={i}
-                  d={strokeToPath(stroke.points)}
-                  stroke={TechColors.text}
-                  strokeWidth={2.5}
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              ))}
-              {currentStroke.length > 0 && (
-                <Path
-                  d={strokeToPath(currentStroke)}
-                  stroke={TechColors.text}
-                  strokeWidth={2.5}
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              )}
-            </Svg>
-          </View>
-
-          <View style={styles.padFooter}>
-            <View style={styles.signatureLine} />
-            <Text style={styles.padFooterText}>
-              Customer signature — Job #{jobId}
-            </Text>
-          </View>
-        </View>
-
-        {/* Confirmation */}
-        {hasSignature && !confirmed && (
-          <TechCard>
-            <View
-              style={{ flexDirection: "row", gap: 8, alignItems: "center" }}
-            >
-              <Text style={{ fontSize: 16 }}>📋</Text>
-              <Text style={{ fontSize: 12, color: TechColors.text2, flex: 1 }}>
-                By signing, the customer confirms the work is complete and
-                agrees to the total amount payable.
-              </Text>
-            </View>
-          </TechCard>
-        )}
-
-        {confirmed && (
-          <View style={styles.confirmedBanner}>
-            <Text style={{ fontSize: 18 }}>✅</Text>
-            <Text
-              style={{
-                fontSize: 13,
-                fontWeight: "600",
-                color: TechColors.brand,
-              }}
-            >
-              Customer confirmation received
-            </Text>
-          </View>
-        )}
-
-        <TechButton
-          label={
-            confirmed ? "✅  Submit & complete job" : "✍️  Confirm signature"
-          }
-          onPress={handleSubmit}
-          loading={saving}
-          disabled={!hasSignature}
-          variant={confirmed ? "accent" : "primary"}
+      <View style={styles.padWrapper}>
+        <SignatureScreen
+          ref={sigRef}
+          onOK={handleOK}
+          onEmpty={handleEmpty}
+          onBegin={handleBegin}
+          autoClear={false}
+          descriptionText=""
+          webStyle={sigPadStyle}
         />
       </View>
+
+      <View style={styles.actions}>
+        <TechButton
+          label="Clear"
+          variant="danger"
+          onPress={handleClear}
+          style={{ flex: 1 }}
+        />
+        <TechButton
+          label={saving ? "Saving..." : "Confirm Signature"}
+          onPress={handleConfirm}
+          loading={saving}
+          disabled={saving}
+          style={{ flex: 1 }}
+        />
+      </View>
+
+      {saving && (
+        <View style={styles.overlay}>
+          <ActivityIndicator size="large" color={TechColors.brand} />
+        </View>
+      )}
     </View>
   );
 }
 
+// Injected CSS for the WebView-based signature pad
+const sigPadStyle = `
+  .m-signature-pad--footer { display: none; margin: 0; }
+  .m-signature-pad { box-shadow: none; border: none; }
+  body,html { background-color: #fff; }
+`;
+
 const styles = StyleSheet.create({
-  padContainer: {
+  hint: {
+    fontSize: 13,
+    color: TechColors.text2,
+    paddingHorizontal: TechSpacing.lg,
+    marginTop: 8,
+    marginBottom: 4,
+  },
+  padWrapper: {
     flex: 1,
-    backgroundColor: TechColors.cardBg,
-    borderRadius: TechRadius.xl,
-    borderWidth: 0.5,
-    borderColor: TechColors.border,
+    marginHorizontal: TechSpacing.lg,
+    marginVertical: 12,
+    borderWidth: 1.5,
+    borderColor: TechColors.borderMd,
+    borderRadius: 12,
     overflow: "hidden",
   },
-  padHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: TechSpacing.lg,
-    paddingVertical: 10,
-    borderBottomWidth: 0.5,
-    borderBottomColor: TechColors.border,
-  },
-  padLabel: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: TechColors.text3,
-    textTransform: "uppercase",
-    letterSpacing: 0.6,
-  },
-  clearBtn: {
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-    backgroundColor: TechColors.pageBg,
-    borderRadius: TechRadius.md,
-  },
-  clearBtnText: { fontSize: 12, fontWeight: "600", color: TechColors.red },
-  pad: { flex: 1, backgroundColor: "#FAFAFA" },
-  padPlaceholder: {
-    ...StyleSheet.absoluteFillObject,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  padPlaceholderText: {
-    fontSize: 16,
-    color: TechColors.border,
-    fontStyle: "italic",
-  },
-  padFooter: {
-    paddingHorizontal: TechSpacing.lg,
-    paddingVertical: 10,
-    borderTopWidth: 0.5,
-    borderTopColor: TechColors.border,
-    gap: 6,
-  },
-  signatureLine: { height: 1, backgroundColor: TechColors.borderMd },
-  padFooterText: { fontSize: 11, color: TechColors.text3, textAlign: "center" },
-  confirmedBanner: {
+  actions: {
     flexDirection: "row",
     gap: 10,
+    paddingHorizontal: TechSpacing.lg,
+    paddingBottom: 24,
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(255,255,255,0.6)",
     alignItems: "center",
-    backgroundColor: TechColors.brandBg,
-    borderRadius: TechRadius.lg,
-    padding: 14,
+    justifyContent: "center",
   },
 });
