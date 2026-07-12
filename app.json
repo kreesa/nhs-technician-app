@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "nhs-login-test",
-    "slug": "nhs-login-test",
+    "name": "nhs-technician-app",
+    "slug": "nhs-technician-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -50,7 +50,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "38f9bcf4-c650-4e2d-b76c-69a1d77a3efd"
+        "projectId": "ba65b89c-502f-48f8-adce-2c06edd84a95"
       }
     },
     "owner": "chrisha"
