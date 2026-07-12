@@ -118,6 +118,13 @@ export async function logout() {
   await removeToken();
 }
 
+// technician_id
+const getTechnicianId = async (): Promise<number | null> => {
+  const tech = await AsyncStorage.getItem("tech_auth_user");
+  if (!tech) return null;
+  return JSON.parse(tech).id;
+};
+
 /* ===========================================================
    PROFILE
 =========================================================== */
@@ -139,28 +146,23 @@ export const techProfileApi = {
       }),
     }),
 
-  updateGpsLocation: (
-    site_latitude: number,
-    site_longitude: number,
-  ): Promise<void> =>
-    request("/api/technician/gps-location", {
+  updateGpsLocation: async (
+    latitude: number,
+    longitude: number,
+  ): Promise<void> => {
+    const technicianId = await getTechnicianId();
+    return request(`/api/technicians/${technicianId}/location-pings`, {
       method: "PUT",
       body: JSON.stringify({
-        site_latitude,
-        site_longitude,
+        latitude,
+        longitude,
       }),
-    }),
-};
+    });
+  },
 
 /* ===========================================================
    JOBS
 =========================================================== */
-// technician_id
-const getTechnicianId = async (): Promise<number | null> => {
-  const tech = await AsyncStorage.getItem("tech_auth_user");
-  if (!tech) return null;
-  return JSON.parse(tech).id;
-};
 
 export const techJobApi = {
 
@@ -175,37 +177,36 @@ export const techJobApi = {
     const technicianId = await getTechnicianId();
     // console.log("Technician ID:", technicianId);
     const response = await request(`/api/technicians/${technicianId}/assigned-jobs`);
-    // filter data that are scheduled for before today
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const todayJobs = (response.data as AssignedJob[]).filter(job => {
-      const scheduled = new Date(job.schedule_for);
-      scheduled.setHours(0, 0, 0, 0);
-
-      return scheduled == today;
-    });
-
-    return todayJobs;
+    return response.data;
   },
+  // getTodaysJobs: async (): Promise<AssignedJob[]> => {
+  //   const technicianId = await getTechnicianId();
+  //   const response = await request(`/api/technicians/${technicianId}/assigned-jobs`);
 
-  getPastJobs: async (): Promise<AssignedJob[]> =>{
+  //   const todayStr = new Date().toDateString(); // e.g. "Sun Jul 12 2026"
+
+  //   const todayJobs = (response.data as AssignedJob[]).filter(job => {
+  //     const scheduledStr = new Date(job.scheduled_for).toDateString();
+  //     return scheduledStr === todayStr;
+  //   });
+
+  //   return todayJobs;
+  // },
+
+  getPastJobs: async (): Promise<AssignedJob[]> => {
     const technicianId = await getTechnicianId();
     const response = await request(`/api/technicians/${technicianId}/assigned-jobs`);
-    console.log("PastJobs:", response.data);
-    // filter data that are scheduled for before today
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
     const pastJobs = (response.data as AssignedJob[]).filter(job => {
-      const scheduled = new Date(job.schedule_for);
+      const scheduled = new Date(job.scheduled_for);
       scheduled.setHours(0, 0, 0, 0);
-
-      return scheduled < today;
+      return scheduled < today; // Date < Date works correctly (coerces to number), unlike ==
     });
 
     return pastJobs;
-
   },
 
   getJobDetail: (jobId: number): Promise<AssignedJob> =>
@@ -253,7 +254,7 @@ export async function addOvertimeLog(
   entries: OvertimeEntry[]
 ) {
   return request(`/api/jobs/${jobId}/logs`, {
-    method: 'POST',
+    method: 'PUT',
     body: JSON.stringify({
       working_hours_log: {
         [dateKey]: entries,
