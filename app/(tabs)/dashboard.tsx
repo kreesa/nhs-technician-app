@@ -240,7 +240,7 @@ export default function DashboardScreen() {
                 <View style={styles.jobCardTop}>
                   <View style={{ flex: 1 }}>
                     <Text style={styles.jobCardTitle}>
-                      Service #{job.service_category_id}
+                      Service # {job.id}
                     </Text>
 
                     <Text style={styles.jobCardSub} numberOfLines={1}>
@@ -263,9 +263,9 @@ export default function DashboardScreen() {
                 </View>
 
                 <View style={styles.jobCardFooter}>
-                  <Text style={styles.jobFee}>
+                  {/* <Text style={styles.jobFee}>
                     NPR {job.original_estimate_amount ?? "-"}
-                  </Text>
+                  </Text> */}
 
                   <TouchableOpacity
                     onPress={() =>
