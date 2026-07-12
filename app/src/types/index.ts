@@ -9,6 +9,19 @@ export interface TechAuthResponse {
   technician: Technician;
 }
 
+// ─── Service Categories ───────────────────────────────────────────────────────
+export interface ServiceCategory {
+  id: number;
+  name: string;
+  icon?: string;
+  execution_mode: string;
+}
+
+export interface ServiceSubCategory {
+  id: number;
+  name: string;
+  service_category_id: number;
+}
 // ─── Technician ───────────────────────────────────────────────────────────────
 export interface Technician {
   id: number;

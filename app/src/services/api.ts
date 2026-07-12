@@ -164,11 +164,29 @@ const getTechnicianId = async (): Promise<number | null> => {
 
 export const techJobApi = {
 
-  getTodaysJobs: async (): Promise<AssignedJob[]> => {
+  getAllJobs: async (): Promise<AssignedJob[]> => {
     const technicianId = await getTechnicianId();
     // console.log("Technician ID:", technicianId);
     const response = await request(`/api/technicians/${technicianId}/assigned-jobs`);
     return response.data;
+  },
+
+  getTodaysJobs: async (): Promise<AssignedJob[]> => {
+    const technicianId = await getTechnicianId();
+    // console.log("Technician ID:", technicianId);
+    const response = await request(`/api/technicians/${technicianId}/assigned-jobs`);
+    // filter data that are scheduled for before today
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const todayJobs = (response.data as AssignedJob[]).filter(job => {
+      const scheduled = new Date(job.schedule_for);
+      scheduled.setHours(0, 0, 0, 0);
+
+      return scheduled == today;
+    });
+
+    return todayJobs;
   },
 
   getPastJobs: async (): Promise<AssignedJob[]> =>{
@@ -212,6 +230,13 @@ export const techJobApi = {
         customer_confirmation_signature: signatureUrl,
       }),
     }),
+};
+
+export const categoryApi = {
+  getCategories: () => request("/api/service-categories"),
+
+  getSubCategories: (id: number) =>
+    request(`/api/service-categories/${id}/sub-categories`),
 };
 
 /* ===========================================================
