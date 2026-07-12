@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
+import { router } from "expo-router";
 import {
   ActivityIndicator,
   Alert,
@@ -215,6 +216,50 @@ export default function JobDetailScreen() {
                 </View>
             </TechCard>
 
+            {/* Live Tracking - technician's own map */}
+            {(job.status === "en_route" ||
+            job.status === "arrived" ||
+            job.status === "started") && (
+              <TechCard label={"live Tracker"}>
+                <View style={styles.mapPh}>
+                  <Text style={{ fontSize: 36, marginBottom: 8 }}>📍</Text>
+                  <Text
+                    style={{
+                      color: TechColors.brand,
+                      fontSize: 13,
+                      fontWeight: "600",
+                    }}
+                  >
+                    You're marked as en route
+                  </Text>
+                  <Text
+                    style={{
+                      color: TechColors.brand,
+                      fontSize: 11,
+                      opacity: 0.8,
+                      marginTop: 2,
+                    }}
+                  >
+                    Sharing your live location with the customer
+                  </Text>
+                </View>
+                <View style={{ padding: 14 }}>
+                  <TechButton
+                    label="Open Map & Navigate"
+                    onPress={() =>
+                      router.push({
+                        pathname: "/en-route",
+                        params: {
+                          destLat: String(job.site_latitude),
+                          destLng: String(job.site_longitude),
+                          jobId: String(job.id),
+                        },
+                      })
+                    }
+                  />
+                </View>
+              </TechCard>
+            )}
             {/* Actions */}
             {actions.length > 0 && (
                 <>
@@ -344,5 +389,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: TechColors.brand,
     fontWeight: "500",
+  },
+
+   mapPh: {
+    backgroundColor: "#d4e8c8",
+    height: 140,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
