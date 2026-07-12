@@ -138,18 +138,11 @@ export default function TechJobsScreen() {
   );
 
   const JOB_STATUSES = [
-    "created",
-    "scheduled",
     "assigned",
     "en_route",
     "arrived",
     "started",
-    "awaiting_approval",
-    "awaiting_material",
     "in_progress",
-    "approved_proxy",
-    "rejected_proxy",
-    "material_ready",
     "completed",
     "invoiced",
     "paid",
