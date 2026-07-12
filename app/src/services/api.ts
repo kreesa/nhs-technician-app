@@ -307,22 +307,24 @@ export const materialApi = {
 =========================================================== */
 
 export const summaryApi = {
-    getMonthlySummary: (): Promise<MonthlySummary> =>
-    request("api/technicians/3/monthly-summary"),
+    // getMonthlySummary: (): Promise<MonthlySummary> =>
+    // request("api/technicians/3/monthly-summary"),
 
   // getMonthlySummary: async (): Promise<MonthlySummary[]> =>{
-  //   const userId = await AsyncStorage.getItem("user_id");
+  //    const technicianId = await getTechnicianId();
   //   return request(`/api/technicians/${technicianId}/monthly-summary`);
   // },
-// getMonthlySummary: async (): Promise<MonthlySummary> => {
-//   const userId = await AsyncStorage.getItem("user_id");
 
-//   const response = await request(
-//     `/api/technicians/${technicianId}/monthly-summary`
-//   );
+  getMonthlySummary: async (): Promise<MonthlySummary> => {
+    const technicianId = await getTechnicianId();
 
-//   return response.data;
-// },
+    const response = await request(
+      `/api/technicians/${technicianId}/monthly-summary`
+    );
+
+    console.log('monthly summary', response);
+    return response.data;
+  },
 };
 
 /* ===========================================================

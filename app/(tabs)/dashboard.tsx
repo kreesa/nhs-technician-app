@@ -187,7 +187,7 @@ export default function DashboardScreen() {
                 icon="✅"
                 label="Jobs completed"
                 value={String(summary.completed_jobs_count)}
-                color={TechColors.green}
+                color={TechColors.brand}
               />
               <SummaryTile
                 icon="✅"
@@ -195,12 +195,12 @@ export default function DashboardScreen() {
                 value={String(summary.working_hours)}
                 color={TechColors.brand}
               />
-              <SummaryTile
+              {/* <SummaryTile
                 icon="✅"
-                label="Working Hours"
+                label="Working Minutes"
                 value={String(summary.total_working_minutes)}
                 color={TechColors.accent}
-              />
+              /> */}
               {/* <SummaryTile
                 icon="💰"
                 label="Total earned"
