@@ -91,8 +91,8 @@ export default function DashboardScreen() {
         sub = await Location.watchPositionAsync(
           {
             accuracy: Location.Accuracy.High,
-            timeInterval: 15000,
-            distanceInterval: 30,
+            timeInterval: 5000,
+            // distanceInterval: 30,
           },
           (loc) => {
             techProfileApi

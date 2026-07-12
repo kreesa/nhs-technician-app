@@ -152,7 +152,7 @@ export const techProfileApi = {
   ): Promise<void> => {
     const technicianId = await getTechnicianId();
     return request(`/api/technicians/${technicianId}/location-pings`, {
-      method: "PUT",
+      method: "POST",
       body: JSON.stringify({
         latitude,
         longitude,
