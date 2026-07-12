@@ -87,15 +87,13 @@ export default function DashboardScreen() {
           {
             accuracy: Location.Accuracy.High,
             timeInterval: 5000,
-            // distanceInterval: 30,
+            distanceInterval: 0,
           },
           (loc) => {
             techProfileApi
-              .updateGpsLocation(
-                loc.coords.latitude,
-                loc.coords.longitude,
-              )
-              .catch(() => {});
+              .updateGpsLocation(loc.coords.latitude, loc.coords.longitude, new Date().toISOString()
+            )
+              .catch((err) => console.error("GPS ping failed:", err.message));
           },
         );
       })();

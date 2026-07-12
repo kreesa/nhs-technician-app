@@ -149,6 +149,7 @@ export const techProfileApi = {
   updateGpsLocation: async (
     latitude: number,
     longitude: number,
+    recorded_at: string,
   ): Promise<void> => {
     const technicianId = await getTechnicianId();
     return request(`/api/technicians/${technicianId}/location-pings`, {
@@ -156,6 +157,7 @@ export const techProfileApi = {
       body: JSON.stringify({
         latitude,
         longitude,
+        recorded_at
       }),
     });
   },
