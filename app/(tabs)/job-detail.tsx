@@ -25,6 +25,7 @@ import {
   TechAvatar,
   TechBadge,
   TechCard,
+  TechButton,
 } from "../src/components/ui";
 
 
@@ -260,12 +261,12 @@ export default function JobDetailScreen() {
                 </View>
                 </>
             )}
-            </ScrollView>
+           
 
 
             {/* Overtime */}
-            <TouchableOpacity onPress={() => setOvertimeModalVisible(true)}>
-              <Text>Overtime Log</Text>
+            <TouchableOpacity >
+              <TechButton label="Log Overtime" onPress={() => setOvertimeModalVisible(true)} />
             </TouchableOpacity>
 
             <OvertimeLogModal
@@ -274,6 +275,8 @@ export default function JobDetailScreen() {
               onClose={() => setOvertimeModalVisible(false)}
               onSuccess={() => {/* refresh logs if you display them */}}
             />
+
+            </ScrollView>
         </View>
         );
 }

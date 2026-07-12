@@ -304,7 +304,7 @@ export default function TechJobsScreen() {
         <TechButton label="View Details" variant='outline' onPress={() =>
           router.push({
             pathname: "/job-detail",
-            params: { jobId: item.id },
+            params: { jobId: String(item.id) },
           })
         } loading={loading} />
 
