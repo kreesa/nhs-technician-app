@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { Technician } from '../types';
+import { router } from "expo-router";
 
 interface TechAuthContextType {
   technician: Technician | null;
@@ -62,6 +63,7 @@ export const TechAuthProvider = ({ children }: { children: ReactNode }) => {
     await AsyncStorage.removeItem('tech_auth_user');
     setToken(null);
     setTechnician(null);
+    router.replace("/");
   };
 
   const updateTechnician = (data: Partial<Technician>) => {
