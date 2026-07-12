@@ -265,15 +265,22 @@ export default function JobDetailScreen() {
 
 
             {/* Overtime */}
-            <TouchableOpacity >
-              <TechButton label="Log Overtime" onPress={() => setOvertimeModalVisible(true)} />
-            </TouchableOpacity>
+            {job?.status === "in_progress" && (
+              <TouchableOpacity>
+                <TechButton
+                  label="Log Overtime"
+                  onPress={() => setOvertimeModalVisible(true)}
+                />
+              </TouchableOpacity>
+            )}
 
             <OvertimeLogModal
               visible={overtimeModalVisible}
-              jobId={jobId} // currentJobId - whatever variable holds the active job id on this screen
+              jobId={jobId}
               onClose={() => setOvertimeModalVisible(false)}
-              onSuccess={() => {/* refresh logs if you display them */}}
+              onSuccess={() => {
+                // refresh logs if needed
+              }}
             />
 
             </ScrollView>
