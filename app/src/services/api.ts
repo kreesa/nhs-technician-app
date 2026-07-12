@@ -169,7 +169,7 @@ export const techJobApi = {
   getAllJobs: async (): Promise<AssignedJob[]> => {
     const technicianId = await getTechnicianId();
     // console.log("Technician ID:", technicianId);
-    const response = await request(`/api/technicians/${technicianId}/assigned-jobs`);
+    const response = await request(`/api/technicians/${technicianId}/assigned-jobs?all=true`);
     return response.data;
   },
 
