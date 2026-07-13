@@ -205,6 +205,17 @@ export const techJobApi = {
         customer_confirmation_signature: signatureUrl,
       }),
     }),
+
+    // Generates (or fetches, if already generated) the invoice for a completed job
+    generateInvoice: async (jobId: number): Promise<InvoiceSummary> => {
+      const res: any = await request(`/api/jobs/${jobId}/invoice`, {
+        method: "GET",
+      });
+      return res?.data ?? res;
+    },
+
+
+
 };
 
 export const categoryApi = {

@@ -70,8 +70,8 @@ export function getAllowedTransitions(
 ): JobStatus[] {
   if (status === "started" && materialRequired) {
     return [
-      "awaiting_approval",
-      "awaiting_material",
+      // "awaiting_approval",
+      // "awaiting_material",
       "in_progress",
       "completed",
       "cancelled",
@@ -86,11 +86,12 @@ export function getStatusLabel(
 ) {
   switch (status) {
     case "invoiced":
-      return "Generate Invoice";
+      return "Confirm Invoice";
     default:
       return status
         .replaceAll("_", " ")
         .replace(/\b\w/g, (c) =>
           c.toUpperCase()
         );
+  }
 }

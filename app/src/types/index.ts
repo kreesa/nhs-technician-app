@@ -97,6 +97,18 @@ export interface MaterialRequest {
   quantity?: number;
 }
 
+// ─── InvoiceSummary ──────────────────────────────────────────────────────────
+export interface InvoiceSummary {
+  invoice_status: "draft" | "finalized" | "paid"; // adjust if there are more states
+  subtotal_labor: string;
+  subtotal_material: string;
+  subtotal_logistics: string;
+  commission_amount: string;
+  tax_amount: string;
+  discount_amount: string;
+  total_amount: string;
+}
+
 // ─── Monthly Summary ──────────────────────────────────────────────────────────
 export interface MonthlySummary {
   month_start: string;

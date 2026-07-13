@@ -27,6 +27,7 @@ import {
   TechBadge,
   TechCard,
   TechButton,
+  TechRowKV,
 } from "../src/components/ui";
 
 
@@ -38,6 +39,9 @@ export default function JobDetailScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [overtimeModalVisible, setOvertimeModalVisible] = useState(false);
+
+  const [invoice, setInvoice] = useState<InvoiceSummary | null>(null);
+  const [invoiceLoading, setInvoiceLoading] = useState(false);
 
   const loadJob = useCallback(async () => {
     try {
@@ -109,6 +113,17 @@ export default function JobDetailScreen() {
     job.material_required ?? false
   );
 
+  const handleGenerateInvoice = async () => {
+    setInvoiceLoading(true);
+    try {
+      const data = await techJobApi.generateInvoice(job.id);
+      setInvoice(data);
+    } catch (err: any) {
+      Alert.alert("Error", err.message || "Failed to generate invoice.");
+    } finally {
+      setInvoiceLoading(false);
+    }
+  };                                
 
     return (
         <View style={TechStyles.screen}>
@@ -260,6 +275,66 @@ export default function JobDetailScreen() {
                 </View>
               </TechCard>
             )}
+
+            {/* Invoice Generation */}
+            {job.status === "completed" && (
+            <TechCard label="Invoice">
+              {!invoice ? (
+                <View style={{ padding: 14 }}>
+                  <TechButton
+                    label="Generate Invoice"
+                    onPress={handleGenerateInvoice}
+                    loading={invoiceLoading}
+                  />
+                </View>
+              ) : (
+                <View style={{ padding: 14 }}>
+                  {/* {Number(invoice.subtotal_labor) > 0 && ( */}
+                    <TechRowKV label="Labor" value={`NPR ${Number(invoice.subtotal_labor).toLocaleString()}`} />
+                  {/* )} */}
+                  {/* {Number(invoice.subtotal_material) > 0 && ( */}
+                    <TechRowKV label="Material" value={`NPR ${Number(invoice.subtotal_material).toLocaleString()}`} />
+                  {/* )} */}
+                  {/* {Number(invoice.subtotal_logistics) > 0 && ( */}
+                    <TechRowKV label="Logistics" value={`NPR ${Number(invoice.subtotal_logistics).toLocaleString()}`} />
+                  {/* )}
+                  {Number(invoice.commission_amount) > 0 && ( */}
+                    <TechRowKV label="Commission" value={`NPR ${Number(invoice.commission_amount).toLocaleString()}`} />
+                  {/* )} 
+                  {Number(invoice.tax_amount) > 0 && ( */}
+                    <TechRowKV label="Tax" value={`NPR ${Number(invoice.tax_amount).toLocaleString()}`} />
+                  {/* )} */}
+                  {/* {Number(invoice.discount_amount) > 0 && ( */}
+                    <TechRowKV label="Discount" value={`- NPR ${Number(invoice.discount_amount).toLocaleString()}`} />
+                  {/* )} */}
+                  <View
+                    style={{
+                      borderTopWidth: 1.5,
+                      borderTopColor: TechColors.borderMd ?? "#D1D5DB",
+                      marginTop: 8,
+                      paddingTop: 10,
+                    }}
+                  >
+                    <TechRowKV
+                      label="Total"
+                      value={`NPR ${Number(invoice.total_amount).toLocaleString()}`}
+                      last
+                    />
+                  </View>
+
+                  <View style={{ flexDirection: "row", gap: 10, marginTop: 14 }}>
+                    <TechButton
+                      label="Edit / Add Item"
+                      variant="danger"
+                      onPress={() => {}}
+                      disabled
+                      style={{ flex: 1 }}
+                    />
+                  </View>
+                </View>
+              )}
+            </TechCard>
+          )}
 
             {/* Confirmation Signature from Customer */}
             {job.status === "paid" && !job.signature_path && (
