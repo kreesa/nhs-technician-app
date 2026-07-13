@@ -59,7 +59,7 @@ export const JOB_TRANSITIONS: Record<
   ],
 
   completed: ["invoiced"],
-  // invoiced: ["paid"],
+  invoiced: ["paid"],
   paid: [],
   cancelled: [],
 };
