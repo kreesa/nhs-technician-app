@@ -6,7 +6,6 @@ import {
   Material,
   MaterialRequest,
   MonthlySummary,
-  OnsiteProgress,
   TechAuthResponse,
   TechLoginPayload,
   Technician,
@@ -250,29 +249,6 @@ export async function addOvertimeLog(
   //   (e.g. if it takes (endpoint, method, body) as separate args instead)
 }
 
-/* ===========================================================
-   ONSITE PROGRESS
-=========================================================== */
-
-export const onsiteApi = {
-  getProgress: (jobId: number): Promise<OnsiteProgress[]> =>
-    request(`/api/technician/jobs/${jobId}/progress`),
-
-  saveProgress: (data: OnsiteProgress): Promise<OnsiteProgress> =>
-    request("/api/technician/onsite-progress", {
-      method: "POST",
-      body: JSON.stringify(data),
-    }),
-
-  updateLatestProgress: (
-    jobId: number,
-    data: Partial<OnsiteProgress>,
-  ): Promise<OnsiteProgress> =>
-    request(`/api/technician/jobs/${jobId}/progress/latest`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-    }),
-};
 
 /* ===========================================================
    MATERIALS

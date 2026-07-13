@@ -60,26 +60,12 @@ export interface AssignedJob {
   site_longitude: number;
   scheduled_for: string;
   scheduled_time_slot: string;
-  original_estimated_amount: number;
+  original_estimate_amount: number;
   status: JobStatus;
-  technician_en_route: boolean;
-  technician_arrival_onsite: boolean;
   need_assistance: boolean;
-  send_quotation_to_customer: boolean;
-  agreed_to_quotation: boolean;
   total_payable_amount?: number;
   payment_method?: string;
   customer_confirmation_signature?: string;
-}
-
-// ─── Onsite Progress ──────────────────────────────────────────────────────────
-export interface OnsiteProgress {
-  id?: number;
-  service_id: number;
-  technician_id: number;
-  current_job_status: OnsiteStatus;
-  technician_note: string;
-  need_assistance: boolean;
 }
 
 // ─── Material ─────────────────────────────────────────────────────────────────
@@ -116,15 +102,3 @@ export interface MonthlySummary {
   total_working_minutes: number;
   working_hours: number;
 }
-
-// ─── Navigation ───────────────────────────────────────────────────────────────
-export type TechRootStackParamList = {
-  Login: undefined;
-  Dashboard: undefined;
-  JobDetail: { jobId: number };
-  OnsiteProgress: { jobId: number };
-  MaterialRequest: { jobId: number };
-  Signature: { jobId: number };
-  TechProfile: undefined;
-};
-
