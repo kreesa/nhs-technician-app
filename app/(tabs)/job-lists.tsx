@@ -95,20 +95,6 @@ function SortToggleButton({
   );
 }
 
-const ACTIVE_STATUSES = [
-    "assigned",
-    "en_route",
-    "arrived",
-    "started",
-    "awaiting_approval",
-    "awaiting_material",
-    "in_progress",
-    "approved_proxy",
-    "rejected_proxy",
-    "material_ready",
-    "invoiced",
-];
-const COMPLETED_STATUSES = ["completed", "paid"];
 
 export default function TechJobsScreen() {
   const [jobs, setJobs] = useState<AssignedJob[]>([]);
@@ -215,15 +201,6 @@ export default function TechJobsScreen() {
     return map;
   }, [categories]);
 
-  const activeCount = useMemo(
-    () => jobs.filter((j) => ACTIVE_STATUSES.includes(j.status)).length,
-    [jobs]
-  );
-
-  const completedCount = useMemo(
-    () => jobs.filter((j) => COMPLETED_STATUSES.includes(j.status)).length,
-    [jobs]
-  );
 
   const filteredAndSortedJobs = useMemo(() => {
     const fromTime = dateFrom?.getTime() ?? null;
@@ -325,18 +302,6 @@ export default function TechJobsScreen() {
           </TouchableOpacity>
         </View>
       )}
-
-      {/* Active / Completed counts */}
-      <View style={styles.summaryRow}>
-        <View style={styles.summaryTile}>
-          <Text style={styles.summaryValue}>{activeCount}</Text>
-          <Text style={styles.summaryLabel}>Active</Text>
-        </View>
-        <View style={styles.summaryTile}>
-          <Text style={styles.summaryValue}>{completedCount}</Text>
-          <Text style={styles.summaryLabel}>Completed</Text>
-        </View>
-      </View>
 
       {/* Category + Status + Sort toggle, all in one row */}
       <View style={styles.selectRow}>
