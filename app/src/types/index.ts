@@ -2,6 +2,7 @@
 export interface TechLoginPayload {
   email: string;
   password: string;
+  device_name: string;
 }
 
 export interface TechAuthResponse {
