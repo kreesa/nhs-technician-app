@@ -31,6 +31,17 @@ import {
 } from "../src/components/ui";
 
 
+function confirmCompletion(onConfirm: () => void) {
+  Alert.alert(
+    "Confirm Completion",
+    "Make sure you've logged your time before completing this job. Once completed, you won't be able to change the status.",
+    [
+      { text: "Cancel", style: "cancel" },
+      { text: "Complete Job", onPress: onConfirm },
+    ]
+  );
+}
+
 export default function JobDetailScreen() {
   const { jobId } = useLocalSearchParams<{ jobId: string }>();
 
@@ -358,6 +369,30 @@ export default function JobDetailScreen() {
 
 
 
+
+            {/* Log Time Duration - Overtime */}
+            {(job.status === "arrived" ||
+            job.status === "started" || 
+            job?.status === "in_progress") && (
+              <TechCard label="Log Time Duration">
+                <TouchableOpacity>
+                  <TechButton
+                    label="Log Time Duration"
+                    onPress={() => setOvertimeModalVisible(true)}
+                  />
+                </TouchableOpacity>
+              </TechCard>
+            )}
+
+            <OvertimeLogModal
+              visible={overtimeModalVisible}
+              jobId={jobId}
+              onClose={() => setOvertimeModalVisible(false)}
+              onSuccess={() => {
+                // refresh logs if needed
+              }}
+            />
+
             {/* Available Actions */}
             {actions.length > 0 && (
                 <>
@@ -373,7 +408,9 @@ export default function JobDetailScreen() {
                         activeOpacity={0.82}
                         disabled={updating}
                         onPress={() =>
-                        updateStatus(status)
+                          status === "completed"
+                            ? confirmCompletion(() => updateStatus(status))
+                            : updateStatus(status)
                         }
                     >
                         <View
@@ -406,25 +443,6 @@ export default function JobDetailScreen() {
             )}
            
 
-
-            {/* Overtime */}
-            {job?.status === "in_progress" && (
-              <TouchableOpacity>
-                <TechButton
-                  label="Log Overtime"
-                  onPress={() => setOvertimeModalVisible(true)}
-                />
-              </TouchableOpacity>
-            )}
-
-            <OvertimeLogModal
-              visible={overtimeModalVisible}
-              jobId={jobId}
-              onClose={() => setOvertimeModalVisible(false)}
-              onSuccess={() => {
-                // refresh logs if needed
-              }}
-            />
 
             </ScrollView>
         </View>
